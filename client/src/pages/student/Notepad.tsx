@@ -95,12 +95,19 @@ const location = useLocation();
   const editorRef = useRef<HTMLDivElement>(null);
 
   // Initialize editor content if editing
-  useEffect(() => {
-    if (editAssignment && editorRef.current) {
-      editorRef.current.innerHTML = editAssignment.content;
-      setContent(editAssignment.content);
-    }
-  }, [editAssignment]);
+useEffect(() => {
+  if (editAssignment && editorRef.current) {
+    // Inject the saved HTML into the contentEditable div
+    editorRef.current.innerHTML = editAssignment.content || "";
+    
+    // Sync the internal string state
+    setContent(editAssignment.content || "");
+    
+    // Update stats if they exist in the database record
+    setTypedChars(editAssignment.typedChars || 0);
+    setPastedChars(editAssignment.pastedChars || 0);
+  }
+}, [editAssignment]); // This runs once on mount when editAssignment is detected
 
 
   // Calculate Stats
