@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: 236 72 153; /* pink-500 */
+  --secondary: 139 92 246; /* purple-500 */
+  --bg-surface: 253 248 251; /* very light pink */
+}
+
+[data-theme='blue'] {
+  --primary: 59 130 246; /* blue-500 */
+  --secondary: 67 156 202; /* blue-600 */
+  --bg-surface: 239 246 255; /* very light blue */
+}
+
+[data-theme='green'] {
+  --primary: 16 185 129; /* emerald-500 */
+  --secondary: 20 184 166; /* teal-500 */
+  --bg-surface: 236 253 245; /* very light green */
+}
+
+[data-theme='orange'] {
+  --primary: 249 115 22; /* orange-500 */
+  --secondary: 239 68 68; /* red-500 */
+  --bg-surface: 255 247 237; /* very light orange */
+}
+
+[data-theme='purple'] {
+  --primary: 147 51 234; /* purple-600 */
+  --secondary: 192 38 211; /* fuchsia-600 */
+  --bg-surface: 250 245 255; /* very light purple */
+}
+
+[data-theme='red'] {
+  --primary: 220 38 38; /* red-600 */
+  --secondary: 185 28 28; /* red-700 */
+  --bg-surface: 254 242 242; /* very light red */
+}
+
+[data-theme='indigo'] {
+  --primary: 79 70 229; /* indigo-600 */
+  --secondary: 67 56 202; /* indigo-700 */
+  --bg-surface: 238 242 255; /* very light indigo */
+}
+
+[data-theme='yellow'] {
+  --primary: 234 179 8; /* yellow-500 */
+  --secondary: 202 138 4; /* yellow-600 */
+  --bg-surface: 254 252 232; /* very light yellow */
+}
+
+.btn-primary {
+  @apply px-4 py-2 text-white rounded-xl bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--secondary))];
+}
+
+.bg-theme {
+  background-color: rgb(var(--bg-surface));
+}
+
+.dark .bg-theme {
+  @apply bg-gray-950;
+}
+
+.btn-success {
+  @apply px-4 py-2 text-white bg-green-500 rounded-xl;
+}
+
+.btn-warning {
+  @apply px-4 py-2 text-white bg-yellow-500 rounded-xl;
+}
+
+.input {
+  @apply w-full p-3 bg-gray-100 outline-none rounded-xl dark:bg-gray-800;
+}
+
+.textarea {
+  @apply w-full p-3 bg-gray-100 outline-none rounded-xl dark:bg-gray-800;
+}
+
+.tab {
+  @apply px-4 py-2 text-gray-500;
+}
+
+.tab.active {
+  @apply text-[rgb(var(--primary))] border-b-2 border-[rgb(var(--primary))];
+}
+
+/* Ensure list styles and formatting work in Notepad and Reviews */
+.notepad-editor ul, .rich-content ul {
+  list-style-type: disc !important;
+  list-style-position: inside !important;
+  margin-left: 0.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.notepad-editor ol, .rich-content ol {
+  list-style-type: decimal !important;
+  list-style-position: inside !important;
+  margin-left: 0.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.notepad-editor li, .rich-content li {
+  display: list-item !important;
+  margin-bottom: 0.25rem !important;
+  padding-left: 0.5rem !important;
+  text-indent: -1.2rem !important;
+  margin-left: 1.2rem !important;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
