@@ -35,12 +35,18 @@ import { openPDF } from "../../utils/file";
 
 export default function Notepad() {
   const location = useLocation();
-  const editAssignment = location.state?.assignment;
+  const assignment = location.state?.assignment;
+  const submission = location.state?.submission;
+  const editAssignment = submission || null;
 
-  const [title, setTitle] = useState(editAssignment?.title || "");
-  const [content, setContent] = useState(editAssignment?.content || "");
+  const [title, setTitle] = useState(
+    editAssignment?.title || assignment?.title || ""
+  );
+  const [content, setContent] = useState(
+    editAssignment?.content || ""
+  );
   const [currentSubmissionId, setCurrentSubmissionId] = useState<string | null>(
-    editAssignment?.status ? editAssignment._id : null
+    submission?._id || null
   );
   const [showPasteAlert, setShowPasteAlert] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -49,8 +55,10 @@ export default function Notepad() {
   const [wordCount, setWordCount] = useState(editAssignment?.wordCount || 0);
   const [wpm, setWpm] = useState(editAssignment?.wpm || 0);
 
-  const assignmentInfo = location.state?.assignmentData || editAssignment?.assignment || editAssignment;
-
+   const assignmentInfo =
+    assignment ||
+    editAssignment?.assignment ||
+    null;
   const [tick, setTick] = useState(Date.now());
   useEffect(() => {
     const timer = setInterval(() => setTick(Date.now()), 10000); // Check every 10s
@@ -364,8 +372,8 @@ export default function Notepad() {
       };
 
       // If we don't have a submission ID yet but we have an assignment template ID
-      if (!currentSubmissionId && editAssignment && !editAssignment.status) {
-        payload.assignment = editAssignment._id;
+      if (!currentSubmissionId && assignment?._id) {
+        payload.assignment = assignment._id;
       }
 
       return currentSubmissionId
@@ -399,8 +407,8 @@ export default function Notepad() {
         status: "submitted",
       };
 
-      if (!currentSubmissionId && editAssignment && !editAssignment.status) {
-        payload.assignment = editAssignment._id;
+      if (!currentSubmissionId && assignment?._id) {
+        payload.assignment = assignment._id;
       }
 
       return currentSubmissionId
