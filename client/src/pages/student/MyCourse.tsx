@@ -286,11 +286,10 @@ export default function MyCourse() {
                                       s.assignment?._id === a._id ||
                                       s.assignment === a._id
                                   );
-                                  
                                   navigate("/student/notepad", {
                                     state: {
-                                      submission: sub || null,
-                                      assignment: a,
+                                      assignment: a,        
+                                      submission: sub ?? null, 
                                     },
                                   });
                                 }}
