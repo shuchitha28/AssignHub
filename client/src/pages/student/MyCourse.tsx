@@ -119,10 +119,14 @@ export default function MyCourse() {
     return subs[0];
   };
 
-  const getDraftsForAssignment = (_assignmentId: string) => {
-    // Return all drafts so the student can select any draft they've written
-    return mySubmissions.filter((s: any) => s.status === "draft");
-  };
+  const getDraftsForAssignment = (assignmentId: string) => {
+  return mySubmissions.filter(
+    (s: any) =>
+      s.status === "draft" &&
+      (s.assignment?._id === assignmentId ||
+        s.assignment === assignmentId)
+  );
+};
 
   /* ================= UI ================= */
   return (
@@ -277,8 +281,18 @@ export default function MyCourse() {
                             {status !== "submitted" && status !== "reviewed" && (
                               <button
                                 onClick={() => {
-                                  const sub = mySubmissions.find((s: any) => s.assignment?._id === a._id || s.assignment === a._id);
-                                  navigate("/student/notepad", { state: { assignment: sub || a, assignmentData: a } });
+                                  const sub = mySubmissions.find(
+                                    (s: any) =>
+                                      s.assignment?._id === a._id ||
+                                      s.assignment === a._id
+                                  );
+                                  
+                                  navigate("/student/notepad", {
+                                    state: {
+                                      submission: sub || null,
+                                      assignment: a,
+                                    },
+                                  });
                                 }}
                                 className="p-12 w-full py-3.5 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-black rounded-2xl border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all text-[10px] uppercase tracking-widest flex items-center justify-center gap-2"
                               >
