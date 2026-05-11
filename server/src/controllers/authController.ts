@@ -51,7 +51,8 @@ export const register = async (req: Request, res: Response) => {
         });
       }
 
-      const verifyUrl = `http://localhost:5173/verify-email/${user.verificationToken}?email=${encodeURIComponent(user.email)}`;
+      const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+      const verifyUrl = `${clientUrl}/verify-email/${user.verificationToken}?email=${encodeURIComponent(user.email)}`;
       await transporter.sendMail({
         from: `"AssignHub" <${process.env.EMAIL_USER || 'noreply@assignhub.com'}>`,
         to: user.email,
@@ -154,7 +155,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
       console.log("Using Ethereal fallback. Preview URL will be logged below.");
     }
 
-    const resetUrl = `http://localhost:5173/reset-password/${token}`;
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+    const resetUrl = `${clientUrl}/reset-password/${token}`;
     
     const info = await transporter.sendMail({
       from: `"AssignHub Support" <${process.env.EMAIL_USER || 'noreply@assignhub.com'}>`,

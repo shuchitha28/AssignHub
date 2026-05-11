@@ -1,6 +1,6 @@
 export const SERVER_URL = import.meta.env.VITE_API_URL 
   ? import.meta.env.VITE_API_URL.replace("/api", "") 
-  : "http://localhost:5000";
+  : "https://assignhub-kpol.onrender.com";
 
 export const getFileUrl = (path: string | undefined): string => {
   if (!path) return "";
