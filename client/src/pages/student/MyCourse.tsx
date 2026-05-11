@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { format } from "date-fns";
-import { getFileUrl, getPdfUrl, openPDF } from "../../utils/file";
+import { openPDF } from "../../utils/file";
 
 
 export default function MyCourse() {
@@ -119,7 +119,7 @@ export default function MyCourse() {
     return subs[0];
   };
 
-  const getDraftsForAssignment = (assignmentId: string) => {
+  const getDraftsForAssignment = (_assignmentId: string) => {
     // Return all drafts so the student can select any draft they've written
     return mySubmissions.filter((s: any) => s.status === "draft");
   };

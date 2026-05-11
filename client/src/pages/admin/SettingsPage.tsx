@@ -233,7 +233,7 @@ export default function SettingsPage() {
                           label="Full Name"
                           icon={<User size={18} />}
                           value={profileForm.name}
-                          onChange={(v) => setProfileForm({ ...profileForm, name: v })}
+                          onChange={(v: any) => setProfileForm({ ...profileForm, name: v })}
                         />
                         <SettingsInput
                           label="Email Address"
@@ -268,13 +268,13 @@ export default function SettingsPage() {
                       label="Platform Name"
                       icon={<Layout size={18} />}
                       value={form.platformName}
-                      onChange={(v) => setForm({ ...form, platformName: v })}
+                      onChange={(v: any) => setForm({ ...form, platformName: v })}
                     />
                     <SettingsInput
                       label="Support Email"
                       icon={<Mail size={18} />}
                       value={form.supportEmail}
-                      onChange={(v) => setForm({ ...form, supportEmail: v })}
+                      onChange={(v: any) => setForm({ ...form, supportEmail: v })}
                     />
                     <div className="space-y-2 md:col-span-2">
                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2 block">System Timezone</label>

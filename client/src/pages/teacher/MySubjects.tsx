@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { FileText, Calendar, Edit2, Trash2, X } from "lucide-react";
 import { format } from "date-fns";
 
-import { getPdfUrl, openPDF } from "../../utils/file";
+import { openPDF } from "../../utils/file";
 
 export default function MySubjects() {
   const qc = useQueryClient();

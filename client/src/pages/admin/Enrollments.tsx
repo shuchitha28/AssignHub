@@ -3,12 +3,12 @@ import API from "../../api/axios";
 import { UserCheck, X, Check, Clock, BookOpen, ShieldCheck, Inbox, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "../../hooks/useTheme";
+
 import { getFileUrl } from "../../utils/file";
 
 export default function Enrollments() {
   const qc = useQueryClient();
-  const { colorTheme } = useTheme();
+
 
   const { data: requestData, isLoading } = useQuery({
     queryKey: ["pending-enrollments"],

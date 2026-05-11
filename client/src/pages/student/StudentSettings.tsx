@@ -23,7 +23,7 @@ import { getFileUrl } from "../../utils/file";
 export default function StudentSettings() {
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { theme, toggleTheme, colorTheme, changeColorTheme, setTheme, setColorTheme } = useTheme();
 
@@ -57,7 +57,7 @@ export default function StudentSettings() {
   const fetchProfile = async () => {
     try {
       const res = await API.get(`/profile/me`);
-      setUser(res.data);
+
       setName(res.data.name || "");
       setEmail(res.data.email || "");
       setBio(res.data.bio || "");

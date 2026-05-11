@@ -39,14 +39,14 @@ import {
 
 import { getUsers } from "../../api/user.api";
 import { isAdmin } from "../../api/auth.api";
-import { useTheme } from "../../hooks/useTheme";
+
 
 export default function CourseDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const tab = params.get("tab") || "subjects";
-  const { colorTheme } = useTheme();
+
 
   const qc = useQueryClient();
 
@@ -112,12 +112,7 @@ export default function CourseDetails() {
     },
   });
 
-  const enroll = useMutation({
-    mutationFn: (sId: string) => adminEnrollStudent({ courseId: id!, studentId: sId }),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["course", id] });
-    },
-  });
+
 
   const enrollMultiple = async () => {
     if (!selectedStudentIds.length) return;

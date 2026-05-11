@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Users, BookOpen, Layers, User, TrendingUp, ArrowUpRight, Activity, Calendar, LayoutDashboard } from "lucide-react";
+import { Users, BookOpen, Layers, User, TrendingUp, Activity, Calendar, LayoutDashboard } from "lucide-react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboard } from "../../api/dashboard.api";
-import { useTheme } from "../../hooks/useTheme";
+
 
 import {
   XAxis,
@@ -16,7 +16,7 @@ import {
 } from "recharts";
 
 export default function Dashboard() {
-  const { colorTheme } = useTheme();
+
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -69,28 +69,24 @@ export default function Dashboard() {
           label="Total Students"
           value={stats?.students || 0}
           icon={<Users className="text-blue-500" />}
-          trend="+12% vs last month"
           color="blue"
         />
         <EnhancedStatCard
           label="Faculty Members"
           value={stats?.teachers || 0}
           icon={<User className="text-indigo-500" />}
-          trend="+3% vs last month"
           color="indigo"
         />
         <EnhancedStatCard
           label="Active Courses"
           value={stats?.courses || 0}
           icon={<BookOpen className="text-purple-500" />}
-          trend="Steady growth"
           color="purple"
         />
         <EnhancedStatCard
           label="Subjects"
           value={stats?.subjects || 0}
           icon={<Layers className="text-pink-500" />}
-          trend="+8 added this week"
           color="pink"
         />
       </div>
@@ -199,7 +195,7 @@ export default function Dashboard() {
 
 /* HELPER COMPONENTS */
 
-function EnhancedStatCard({ label, value, icon, trend, color }: any) {
+function EnhancedStatCard({ label, value, icon, color }: any) {
   return (
     <motion.div
       whileHover={{ y: -5 }}

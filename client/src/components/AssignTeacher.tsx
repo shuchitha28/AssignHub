@@ -14,7 +14,7 @@ export default function AssignTeacher({ subject }: any) {
 
   const mutation = useMutation({
     mutationFn: (id: string) =>
-      assignTeacher({ subjectId: subject._id, teacherId: id }),
+      assignTeacher({ subjectId: subject._id, teacherIds: [id] }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["course"] });
     },

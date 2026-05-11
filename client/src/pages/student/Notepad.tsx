@@ -31,7 +31,7 @@ import { useLocation } from "react-router-dom";
 import { saveSubmission, updateSubmission } from "../../api/assignment.api";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import { getPdfUrl, openPDF } from "../../utils/file";
+import { openPDF } from "../../utils/file";
 
 export default function Notepad() {
   const location = useLocation();
@@ -90,7 +90,7 @@ export default function Notepad() {
       setContent(editAssignment.content);
     }
   }, [editAssignment]);
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
 
   // Calculate Stats
   useEffect(() => {
@@ -283,7 +283,7 @@ export default function Notepad() {
           handleInput();
         }
       }
-      setTypedChars(prev => prev + 1);
+      setTypedChars((prev: number) => prev + 1);
     }
   };
 
@@ -332,7 +332,7 @@ export default function Notepad() {
       selection.addRange(range);
     }
 
-    setPastedChars(prev => prev + pastedText.length);
+    setPastedChars((prev: number) => prev + pastedText.length);
     setShowPasteAlert(true);
 
     // Force set content update

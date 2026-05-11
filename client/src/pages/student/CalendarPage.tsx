@@ -81,7 +81,7 @@ export default function CalendarPage() {
     onError: () => toast.error("Failed to submit assignment"),
   });
 
-  const getDraftsForAssignment = (assignmentId: string) => {
+  const getDraftsForAssignment = (_assignmentId: string) => {
     return mySubmissions.filter((s: any) => s.status === "draft");
   };
 
@@ -301,7 +301,7 @@ export default function CalendarPage() {
                           }
                           setShowSubmitModal(asg);
                         }}
-                        disabled={status === "submitted" || status === "reviewed" || (asg.deadline && new Date(asg.deadline).getTime() < Date.now())}
+                        disabled={status === "submitted" || status === "reviewed" || (!!asg.deadline && new Date(asg.deadline).getTime() < Date.now())}
                         className={`w-full py-3.5 text-white font-black rounded-2xl transition-all shadow-lg uppercase text-[10px] tracking-widest disabled:opacity-40 disabled:grayscale disabled:shadow-none ${
                           (asg.deadline && new Date(asg.deadline).getTime() < Date.now() && status !== "submitted" && status !== "reviewed")
                             ? "bg-gray-400 shadow-gray-400/20"

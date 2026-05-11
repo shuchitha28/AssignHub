@@ -414,7 +414,7 @@ export default function Review() {
   if (selectedSubmission) {
     const sub = selectedSubmission;
 
-    const { typed: typedPercent, pasted: pastedPercent } = getPercentages(sub);
+    const { typed: typedPercent } = getPercentages(sub);
     const radius = 24;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference - (typedPercent / 100) * circumference;

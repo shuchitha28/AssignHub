@@ -17,12 +17,12 @@ import {
   Filter
 } from "lucide-react";
 import { Card } from "../components/Card";
-import { useTheme } from "../hooks/useTheme";
+
 
 export default function CoursesPage() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
-  const { colorTheme } = useTheme();
+
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["courses"],

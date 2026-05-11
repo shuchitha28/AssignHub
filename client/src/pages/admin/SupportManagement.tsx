@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../../api/axios";
 import {
@@ -22,11 +22,9 @@ export default function SupportManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
   const [showConfirm, setShowConfirm] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+
+
 
   const { data: tickets, isLoading, isError } = useQuery({
     queryKey: ["admin-tickets"],

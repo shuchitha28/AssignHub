@@ -74,7 +74,7 @@ export default function QuickSupport() {
 
               <div className="flex-1 overflow-auto p-6 space-y-6">
                 {/* Tickets History */}
-                {tickets?.data?.length > 0 && (
+                {tickets?.data && tickets.data.length > 0 && (
                   <div className="space-y-3">
                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Recent Conversations</p>
                     {tickets.data.map((t: any) => (
