@@ -81,8 +81,13 @@ export default function CalendarPage() {
     onError: () => toast.error("Failed to submit assignment"),
   });
 
-  const getDraftsForAssignment = (_assignmentId: string) => {
-    return mySubmissions.filter((s: any) => s.status === "draft");
+    const getDraftsForAssignment = (assignmentId: string) => {
+    return mySubmissions.filter(
+      (s: any) =>
+        s.status === "draft" &&
+        (s.assignment?._id === assignmentId ||
+          s.assignment === assignmentId)
+    );
   };
 
   const getSubmissionStatus = (assignmentId: string) => {
@@ -316,7 +321,12 @@ export default function CalendarPage() {
                         <button 
                           onClick={() => {
                             const sub = mySubmissions.find((s: any) => s.assignment?._id === asg._id || s.assignment === asg._id);
-                            navigate("/student/notepad", { state: { assignment: sub || asg, assignmentData: asg } });
+                            navigate("/student/notepad", {
+                              state: {
+                                assignment: asg,         
+                                submission: sub ?? null, 
+                              },
+                            });
                           }}
                           className="w-full py-3.5 bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-black rounded-2xl border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all text-[10px] uppercase tracking-widest"
                         >
@@ -415,7 +425,7 @@ export default function CalendarPage() {
               
               <div className="mt-8 flex gap-4">
                 <button onClick={() => setShowSubmitModal(null)} className="flex-1 py-4 bg-gray-50 dark:bg-gray-800 text-gray-500 font-bold rounded-2xl hover:bg-gray-100 transition-all">Cancel</button>
-                <button onClick={() => { navigate("/student/notepad", { state: { assignment: showSubmitModal, assignmentData: showSubmitModal } }); setShowSubmitModal(null); }} className="flex-1 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold rounded-2xl hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                <button onClick={() => { navigate("/student/notepad", {state: {assignment: showSubmitModal,submission: null,},}); setShowSubmitModal(null); }} className="flex-1 py-4 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold rounded-2xl hover:opacity-90 transition-all flex items-center justify-center gap-2">
                   New Draft <Plus size={18} />
                 </button>
               </div>
