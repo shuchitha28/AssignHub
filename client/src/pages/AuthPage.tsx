@@ -50,7 +50,7 @@ export default function AuthPage() {
     }
   }, [navigate]);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
