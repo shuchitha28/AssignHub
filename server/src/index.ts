@@ -27,7 +27,10 @@ const app = express();
 
 /* ================= MIDDLEWARE ================= */
 app.use(cors({
-  origin: "*",
+  origin: [
+    "http://localhost:5173",
+    "https://assignhub-kohl.vercel.app"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
