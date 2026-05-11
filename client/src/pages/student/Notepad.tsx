@@ -34,19 +34,22 @@ import { CheckCircle2 } from "lucide-react";
 import { openPDF } from "../../utils/file";
 
 export default function Notepad() {
-  const location = useLocation();
-  const assignment = location.state?.assignment;
-  const submission = location.state?.submission;
-  const editAssignment = submission || null;
+const location = useLocation();
+
+  const editAssignment = location.state?.assignment || null; 
+  
+  const assignmentInfo = location.state?.assignmentData || editAssignment?.assignment || null;
 
   const [title, setTitle] = useState(
-    editAssignment?.title || assignment?.title || ""
+    editAssignment?.title || assignmentInfo?.title || ""
   );
+  
   const [content, setContent] = useState(
     editAssignment?.content || ""
   );
+  
   const [currentSubmissionId, setCurrentSubmissionId] = useState<string | null>(
-    submission?._id || null
+    editAssignment?._id || null
   );
   const [showPasteAlert, setShowPasteAlert] = useState(false);
   const [startTime, setStartTime] = useState<number | null>(null);
