@@ -23,26 +23,12 @@ router.put("/:id", async (req, res) => {
   res.json(updated);
 });
 
-// router.delete("/:id", protect, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.params.id);
-//     if (!user) return res.status(404).json({ message: "User not found" });
-
-//     // Clean up profile picture from Cloudinary or Local Storage
-//     if (user.profilePicture) {
-//       await deleteFile(user.profilePicture);
-//     }
-
-//     await User.findByIdAndDelete(req.params.id);
-//     res.json({ message: "User and related media deleted successfully" });
-//   } catch (error) {
-//     res.status(500).json({ message: "Deletion failed" });
-//   }
-// });
-
 router.delete("/:id", protect, async (req, res) => {
   try {
-    const userId = req.params.id;
+
+    const userId = new mongoose.Types.ObjectId(req.params.id);
+
+    console.log("Deleting user:", userId);
 
     const user = await User.findById(userId);
 
@@ -60,33 +46,49 @@ router.delete("/:id", protect, async (req, res) => {
       student: userId
     });
 
+    console.log("Found submissions:", submissions.length);
+
     for (const submission of submissions) {
       if (submission.fileUrl) {
         await deleteFile(submission.fileUrl);
       }
     }
 
-    await Submission.deleteMany({
+    const submissionDelete = await Submission.deleteMany({
       student: userId
     });
 
-    await Course.updateMany(
-      { students: userId },
+    console.log("SUBMISSION DELETE:", submissionDelete);
+
+    const courseUpdate = await Course.updateMany(
+      {
+        $or: [
+          { students: userId },
+          { pendingStudents: userId }
+        ]
+      },
       {
         $pull: {
-          students: userId
+          students: userId,
+          pendingStudents: userId
         }
       }
     );
 
-    await Subject.updateMany(
-      { teachers: userId },
+    console.log("COURSE UPDATE:", courseUpdate);
+
+    const subjectUpdate = await Subject.updateMany(
+      {
+        teachers: userId
+      },
       {
         $pull: {
           teachers: userId
         }
       }
     );
+
+    console.log("SUBJECT UPDATE:", subjectUpdate);
 
     await User.findByIdAndDelete(userId);
 
@@ -95,13 +97,15 @@ router.delete("/:id", protect, async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+
+    console.error("DELETE USER ERROR:", error);
 
     res.status(500).json({
       message: "Deletion failed"
     });
   }
 });
+
 
 router.post("/", async (req, res) => {
   try {
