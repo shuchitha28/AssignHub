@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import nodemailer from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
 import crypto from "crypto";
 import { OAuth2Client } from "google-auth-library";
 import dns from "dns";
@@ -44,16 +45,18 @@ export const register = async (req: Request, res: Response) => {
         transporter = nodemailer.createTransport({
           service: "gmail",
           auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-        });
+        } as SMTPTransport.Options);
       } else {
         const testAccount = await nodemailer.createTestAccount();
-        transporter = nodemailer.createTransport({
-          host: "smtp.gmail.com",
-          port: 587,
-          secure: false,
-          family: 4,
-          auth: { user: testAccount.user, pass: testAccount.pass },
-        });
+          transporter = nodemailer.createTransport({
+            host: "smtp.ethereal.email",
+            port: 587,
+            secure: false,
+            auth: {
+              user: testAccount.user,
+              pass: testAccount.pass,
+            },
+          } as SMTPTransport.Options);
       }
 
       const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
@@ -145,19 +148,18 @@ export const forgotPassword = async (req: Request, res: Response) => {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
         },
-      });
+      } as SMTPTransport.Options);
     } else {
       const testAccount = await nodemailer.createTestAccount();
       transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
+        host: "smtp.ethereal.email",
         port: 587,
         secure: false,
-        family: 4,
         auth: {
           user: testAccount.user,
           pass: testAccount.pass,
         },
-      });
+      } as SMTPTransport.Options);
       console.log("Using Ethereal fallback. Preview URL will be logged below.");
     }
 
@@ -175,7 +177,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     });
 
     if (!process.env.EMAIL_USER) {
-      console.log("Password Reset Email Preview URL: %s", nodemailer.getTestMessageUrl(info));
+      console.log("Password Reset Email Preview URL: %s", nodemailer.getTestMessageUrl(info as SMTPTransport.SentMessageInfo));
     }
 
     res.json({ message: "Password reset link sent to your email! (Check server logs for the test link)" });
