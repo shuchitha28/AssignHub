@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 
 import User from "../models/user";
 import Submission from "../models/submission";
@@ -29,7 +28,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", protect, async (req, res) => {
   try {
 
-    const userId = new mongoose.Types.ObjectId(req.params.id);
+    const userId = req.params.id;
 
     console.log("Deleting user:", userId);
 
@@ -57,19 +56,14 @@ router.delete("/:id", protect, async (req, res) => {
       }
     }
 
-    const submissionDelete = await Submission.deleteMany({
+    const deletedSubmissions = await Submission.deleteMany({
       student: userId
     });
 
-    console.log("SUBMISSION DELETE:", submissionDelete);
+    console.log("Deleted submissions:", deletedSubmissions);
 
-    const courseUpdate = await Course.updateMany(
-      {
-        $or: [
-          { students: userId },
-          { pendingStudents: userId }
-        ]
-      },
+    const updatedCourses = await Course.updateMany(
+      {},
       {
         $pull: {
           students: userId,
@@ -78,12 +72,10 @@ router.delete("/:id", protect, async (req, res) => {
       }
     );
 
-    console.log("COURSE UPDATE:", courseUpdate);
+    console.log("Updated courses:", updatedCourses);
 
-    const subjectUpdate = await Subject.updateMany(
-      {
-        teachers: userId
-      },
+    const updatedSubjects = await Subject.updateMany(
+      {},
       {
         $pull: {
           teachers: userId
@@ -91,7 +83,7 @@ router.delete("/:id", protect, async (req, res) => {
       }
     );
 
-    console.log("SUBJECT UPDATE:", subjectUpdate);
+    console.log("Updated subjects:", updatedSubjects);
 
     await User.findByIdAndDelete(userId);
 
@@ -108,7 +100,6 @@ router.delete("/:id", protect, async (req, res) => {
     });
   }
 });
-
 
 router.post("/", async (req, res) => {
   try {
