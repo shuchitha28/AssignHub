@@ -67,8 +67,8 @@ router.delete("/:id", protect, async (req, res) => {
       {},
       {
         $pull: {
-          students: userId,
-          pendingStudents: userId
+          students: { $in: [userId, req.params.id] },
+          pendingStudents: { $in: [userId, req.params.id] }
         }
       }
     );
