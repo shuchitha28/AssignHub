@@ -2,6 +2,9 @@ import express from "express";
 import User from "../models/user";
 import { protect } from "../middleware/auth";
 import { deleteFile } from "../utils/fileUpload";
+import Submission from "../models/submission";
+import Course from "../models/course";
+import Subject from "../models/subject";
 
 const router = express.Router();
 
@@ -20,20 +23,83 @@ router.put("/:id", async (req, res) => {
   res.json(updated);
 });
 
+// router.delete("/:id", protect, async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.id);
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     // Clean up profile picture from Cloudinary or Local Storage
+//     if (user.profilePicture) {
+//       await deleteFile(user.profilePicture);
+//     }
+
+//     await User.findByIdAndDelete(req.params.id);
+//     res.json({ message: "User and related media deleted successfully" });
+//   } catch (error) {
+//     res.status(500).json({ message: "Deletion failed" });
+//   }
+// });
+
 router.delete("/:id", protect, async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const userId = req.params.id;
 
-    // Clean up profile picture from Cloudinary or Local Storage
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
     if (user.profilePicture) {
       await deleteFile(user.profilePicture);
     }
 
-    await User.findByIdAndDelete(req.params.id);
-    res.json({ message: "User and related media deleted successfully" });
+    const submissions = await Submission.find({
+      student: userId
+    });
+
+    for (const submission of submissions) {
+      if (submission.fileUrl) {
+        await deleteFile(submission.fileUrl);
+      }
+    }
+
+    await Submission.deleteMany({
+      student: userId
+    });
+
+    await Course.updateMany(
+      { students: userId },
+      {
+        $pull: {
+          students: userId
+        }
+      }
+    );
+
+    await Subject.updateMany(
+      { teachers: userId },
+      {
+        $pull: {
+          teachers: userId
+        }
+      }
+    );
+
+    await User.findByIdAndDelete(userId);
+
+    res.json({
+      message: "User and related data deleted successfully"
+    });
+
   } catch (error) {
-    res.status(500).json({ message: "Deletion failed" });
+    console.error(error);
+
+    res.status(500).json({
+      message: "Deletion failed"
+    });
   }
 });
 
