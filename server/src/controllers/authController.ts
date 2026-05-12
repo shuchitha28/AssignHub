@@ -6,6 +6,10 @@ import { Request, Response } from "express";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { OAuth2Client } from "google-auth-library";
+import dns from "dns";
+
+
+dns.setDefaultResultOrder("ipv4first");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -44,9 +48,10 @@ export const register = async (req: Request, res: Response) => {
       } else {
         const testAccount = await nodemailer.createTestAccount();
         transporter = nodemailer.createTransport({
-          host: "smtp.ethereal.email",
+          host: "smtp.gmail.com",
           port: 587,
           secure: false,
+          family: 4,
           auth: { user: testAccount.user, pass: testAccount.pass },
         });
       }
@@ -144,9 +149,10 @@ export const forgotPassword = async (req: Request, res: Response) => {
     } else {
       const testAccount = await nodemailer.createTestAccount();
       transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
+        host: "smtp.gmail.com",
         port: 587,
         secure: false,
+        family: 4,
         auth: {
           user: testAccount.user,
           pass: testAccount.pass,
