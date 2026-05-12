@@ -120,7 +120,7 @@ export default function Assignments() {
   });
 
   const handleEdit = (sub: Submission) => {
-    navigate("/student/notepad", { state: { assignment: sub, assignmentData: sub.assignment } });
+    navigate("/student/notepad", { state: { submission: sub, assignmentData: sub.assignment } });
   };
 
   const handleDelete = (id: string) => {
