@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 
 import User from "../models/user";
 import Submission from "../models/submission";
@@ -28,7 +29,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", protect, async (req, res) => {
   try {
 
-    const userId = req.params.id;
+    const userId = new mongoose.Types.ObjectId(req.params.id);
 
     console.log("Deleting user:", userId);
 
