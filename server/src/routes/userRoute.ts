@@ -1,10 +1,13 @@
 import express from "express";
+import mongoose from "mongoose";
+
 import User from "../models/user";
-import { protect } from "../middleware/auth";
-import { deleteFile } from "../utils/fileUpload";
 import Submission from "../models/submission";
 import Course from "../models/course";
 import Subject from "../models/subject";
+
+import { protect } from "../middleware/auth";
+import { deleteFile } from "../utils/fileUpload";
 
 const router = express.Router();
 
