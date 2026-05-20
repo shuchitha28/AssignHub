@@ -101,7 +101,9 @@ export default function ReportCard() {
           status: submission ? submission.status : "not_submitted",
           marks: submission ? submission.marks : null,
           assignment: assignment,
-          hasSubmitted: !!submission
+          hasSubmitted:
+            !!submission &&
+            ["submitted", "reviewed", "revision_requested"].includes(submission.status)
         });
       });
     });
