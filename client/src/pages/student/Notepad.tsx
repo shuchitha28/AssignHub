@@ -69,7 +69,15 @@ export default function Notepad() {
   }, []);
 
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
-
+  
+   const [localStatus, setLocalStatus] = useState(
+      editAssignment?.status || "draft"
+    );
+    
+    const isReadOnly =
+      localStatus === "submitted" ||
+      localStatus === "reviewed" ||
+      isDeadlinePassed;
   // Auto-save logic
   useEffect(() => {
     if (
@@ -98,15 +106,6 @@ export default function Notepad() {
     if (!assignmentInfo?.deadline) return false;
     return new Date(assignmentInfo.deadline).getTime() < tick;
   }, [assignmentInfo?.deadline, tick]);
-
- const [localStatus, setLocalStatus] = useState(
-    editAssignment?.status || "draft"
-  );
-  
-  const isReadOnly =
-    localStatus === "submitted" ||
-    localStatus === "reviewed" ||
-    isDeadlinePassed;
   
   const editorRef = useRef<HTMLDivElement>(null);
 
