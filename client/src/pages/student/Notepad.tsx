@@ -83,28 +83,41 @@ export default function Notepad() {
       localStatus === "reviewed" ||
       isDeadlinePassed;
   // Auto-save logic
-  useEffect(() => {
-    if (
-      isReadOnly ||
-      localStatus === "submitted" ||
-      !title.trim() ||
-      !content.trim()
-    ) {
-      return;
-    }
-  
-    const timeout = setTimeout(() => {
-      setAutoSaveStatus("saving");
-  
-      saveDraftMutation.mutate(undefined, {
-        onSuccess: () => setAutoSaveStatus("saved"),
-        onError: () => setAutoSaveStatus("error"),
-      });
-    }, 3000);
-  
-    return () => clearTimeout(timeout);
-  
-  }, [content, title, localStatus, isReadOnly]);
+useEffect(() => {
+  if (
+    isReadOnly ||
+    localStatus === "submitted" ||
+    !title.trim() ||
+    !content.trim()
+  ) {
+    return;
+  }
+
+  const timeout = setTimeout(() => {
+    if (saveDraftMutation.isPending) return;
+
+    setAutoSaveStatus("saving");
+
+    saveDraftMutation.mutate(undefined, {
+      onSuccess: () => setAutoSaveStatus("saved"),
+      onError: () => setAutoSaveStatus("error"),
+    });
+  }, 3000);
+
+  return () => clearTimeout(timeout);
+
+}, [
+  content,
+  title,
+  localStatus,
+  isReadOnly,
+  typedChars,
+  pastedChars,
+  wordCount,
+  wpm,
+  typedPercentage,
+  pastedPercentage,
+]);
   
   const editorRef = useRef<HTMLDivElement>(null);
 
