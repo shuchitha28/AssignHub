@@ -268,7 +268,10 @@ export const getReportCardData = async (req: any, res: any) => {
 
     // 2. Get all submissions for these assignments
     const submissions = await Submission.find({
-      assignment: { $in: assignmentIds }
+      assignment: { $in: assignmentIds },
+      status: {
+        $in: ["submitted", "reviewed", "revision_requested"]
+      }
     }).populate("student", "name email");
 
     res.json({
