@@ -117,7 +117,12 @@ router.get("/analytics", protect, async (req, res) => {
 
         for (const a of assignments) {
           const totalStudents = course.students.length;
-          const submittedCount = await Submission.countDocuments({ assignment: a._id });
+          const submittedCount = await Submission.countDocuments({
+            assignment: a._id,
+            status: {
+              $in: ["submitted", "reviewed", "revision_requested"]
+            }
+          });
 
           assignmentData.push({
             _id: a._id,
