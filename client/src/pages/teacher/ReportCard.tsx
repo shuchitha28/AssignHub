@@ -82,9 +82,17 @@ export default function ReportCard() {
           (s: any) => {
             const sId = s.student?._id || s.student;
             const stuId = student._id || student;
+        
             const aId = s.assignment?._id || s.assignment;
             const tId = assignment._id;
-            return String(sId) === String(stuId) && String(aId) === String(tId);
+        
+            const validStatuses = ["submitted", "reviewed"];
+        
+            return (
+              String(sId) === String(stuId) &&
+              String(aId) === String(tId) &&
+              validStatuses.includes(s.status)
+            );
           }
         );
 
