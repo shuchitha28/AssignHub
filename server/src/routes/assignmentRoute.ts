@@ -118,16 +118,27 @@ router.get("/analytics", protect, async (req, res) => {
         for (const a of assignments) {
           const totalStudents = course.students?.length || 0;
         
-          const validSubmissions = await Submission.find({
-            assignment: a._id,
-            status: { $in: ["submitted", "reviewed", "revision_requested"]},
-          }).select("student status");
-        
-          const uniqueStudents = new Set(
-            validSubmissions.map((s) => String(s.student))
-          );
+const submissions = await Submission.find({
+  assignment: a._id,
+})
+.sort({ updatedAt: -1 });
+
+const latestSubmissionMap = new Map();
+
+for (const sub of submissions) {
+  const studentId = String(sub.student);
+
+  // keep only latest submission per student
+  if (!latestSubmissionMap.has(studentId)) {
+    latestSubmissionMap.set(studentId, sub);
+  }
+}
+
+const submittedCount = Array.from(latestSubmissionMap.values()).filter(
+  (s: any) =>
+    ["submitted", "reviewed", "revision_requested"].includes(s.status)
+).length;
           
-          const submittedCount = uniqueStudents.size;
           const notSubmittedCount = Math.max(
             totalStudents - submittedCount,
             0
