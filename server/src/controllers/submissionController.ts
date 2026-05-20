@@ -2,28 +2,70 @@ import Submission from "../models/submission";
 import Subject from "../models/subject";
 import Assignment from "../models/assignment";
 
+// export const submitAssignment = async (req: any, res: any) => {
+//   try {
+//     const { id } = req.body; // If ID exists, it's an update
+//     const student = req.user._id;
+
+//     if (id) {
+//       const updated = await Submission.findOneAndUpdate(
+//         { _id: id, student },
+//         { ...req.body, student },
+//         { returnDocument: 'after' }
+
+//       );
+//       return res.json(updated);
+//     }
+
+//     const submission = await Submission.create({
+//       ...req.body,
+//       student
+//     });
+//     res.status(201).json(submission);
+//   } catch (error: any) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 export const submitAssignment = async (req: any, res: any) => {
   try {
-    const { id } = req.body; // If ID exists, it's an update
+    const { id, action } = req.body;
+
     const student = req.user._id;
+
+    const status =
+      action === "submit"
+        ? "submitted"
+        : "draft";
 
     if (id) {
       const updated = await Submission.findOneAndUpdate(
         { _id: id, student },
-        { ...req.body, student },
-        { returnDocument: 'after' }
-
+        {
+          ...req.body,
+          student,
+          status,
+        },
+        {
+          new: true,
+        }
       );
+
       return res.json(updated);
     }
 
     const submission = await Submission.create({
       ...req.body,
-      student
+      student,
+      status,
     });
+
     res.status(201).json(submission);
+
   } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
