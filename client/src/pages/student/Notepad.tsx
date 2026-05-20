@@ -57,6 +57,7 @@ export default function Notepad() {
   const [pastedChars, setPastedChars] = useState(editAssignment?.pastedChars || 0);
   const [wordCount, setWordCount] = useState(editAssignment?.wordCount || 0);
   const [wpm, setWpm] = useState(editAssignment?.wpm || 0);
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
    const assignmentInfo =
     assignment ||
@@ -68,7 +69,10 @@ export default function Notepad() {
     return () => clearInterval(timer);
   }, []);
 
-  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+    const isDeadlinePassed = useMemo(() => {
+    if (!assignmentInfo?.deadline) return false;
+    return new Date(assignmentInfo.deadline).getTime() < tick;
+  }, [assignmentInfo?.deadline, tick]);
   
    const [localStatus, setLocalStatus] = useState(
       editAssignment?.status || "draft"
@@ -101,11 +105,6 @@ export default function Notepad() {
     return () => clearTimeout(timeout);
   
   }, [content, title, localStatus, isReadOnly]);
-
-  const isDeadlinePassed = useMemo(() => {
-    if (!assignmentInfo?.deadline) return false;
-    return new Date(assignmentInfo.deadline).getTime() < tick;
-  }, [assignmentInfo?.deadline, tick]);
   
   const editorRef = useRef<HTMLDivElement>(null);
 
