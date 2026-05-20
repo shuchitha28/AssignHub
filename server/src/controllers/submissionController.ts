@@ -49,11 +49,34 @@ export const submitAssignment = async (req: any, res: any) => {
       return res.json(updated);
     }
 
-    const submission = await Submission.create({
-      ...req.body,
+    if (req.body.assignment) {
+      const assignment = await Assignment.findById(req.body.assignment);
+    
+      if (assignment?.deadline && new Date() > assignment.deadline) {
+        return res.status(400).json({
+          message: "Assignment deadline has passed",
+        });
+      }
+    }
+
+    const existing = await Submission.findOne({
+      assignment: req.body.assignment,
       student,
-      status,
     });
+    
+    if (existing) {
+      const updated = await Submission.findByIdAndUpdate(
+        existing._id,
+        {
+          ...req.body,
+          student,
+          status,
+        },
+        { new: true }
+      );
+    
+      return res.json(updated);
+    }
 
     res.status(201).json(submission);
 
@@ -139,7 +162,7 @@ export const reviewSubmission = async (req: any, res: any) => {
     const updated = await Submission.findByIdAndUpdate(
       id,
       { ...req.body, reviewedBy: req.user._id },
-      { returnDocument: 'after' }
+      { new: true }
 
     );
     res.json(updated);
@@ -155,7 +178,7 @@ export const updateSubmission = async (req: any, res: any) => {
     const updated = await Submission.findOneAndUpdate(
       { _id: id, student },
       req.body,
-      { returnDocument: 'after' }
+      { new: true }
 
     );
     res.json(updated);
