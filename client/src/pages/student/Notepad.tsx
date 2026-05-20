@@ -82,7 +82,42 @@ export default function Notepad() {
       localStatus === "submitted" ||
       localStatus === "reviewed" ||
       isDeadlinePassed;
-  // Auto-save logic
+
+const editorRef = useRef<HTMLDivElement>(null);
+
+const { typedPercentage, pastedPercentage } = useMemo(() => {
+  if (!editorRef.current) {
+    return { typedPercentage: 100, pastedPercentage: 0 };
+  }
+
+  const totalText = editorRef.current.innerText || "";
+  const totalChars = totalText.length;
+
+  if (totalChars === 0) {
+    return { typedPercentage: 100, pastedPercentage: 0 };
+  }
+
+  const pastedSpans =
+    editorRef.current.querySelectorAll(".pasted-content");
+
+  let totalPasted = 0;
+
+  pastedSpans.forEach((span: any) => {
+    totalPasted += span.innerText.length;
+  });
+
+  const actualPasted = Math.min(totalPasted, totalChars);
+  const pastedPercent = Math.round(
+    (actualPasted / totalChars) * 100
+  );
+
+  return {
+    typedPercentage: 100 - pastedPercent,
+    pastedPercentage: pastedPercent,
+  };
+}, [content]);
+
+// Auto-save logic
 useEffect(() => {
   if (
     isReadOnly ||
@@ -105,7 +140,6 @@ useEffect(() => {
   }, 3000);
 
   return () => clearTimeout(timeout);
-
 }, [
   content,
   title,
@@ -119,8 +153,6 @@ useEffect(() => {
   pastedPercentage,
 ]);
   
-  const editorRef = useRef<HTMLDivElement>(null);
-
   // Initialize editor content if editing
  useEffect(() => {
     if (editAssignment && editorRef.current) {
@@ -178,37 +210,6 @@ useEffect(() => {
     document.addEventListener("selectionchange", handleSelectionChange);
     return () => document.removeEventListener("selectionchange", handleSelectionChange);
   }, []);
-
-  const { typedPercentage, pastedPercentage } = useMemo(() => {
-    if (!editorRef.current) return { typedPercentage: 100, pastedPercentage: 0 };
-
-    const totalText = editorRef.current.innerText || "";
-    const totalChars = totalText.length;
-
-    if (totalChars === 0) return { typedPercentage: 100, pastedPercentage: 0 };
-
-    // Find all pasted content spans
-    const pastedSpans = editorRef.current.querySelectorAll(".pasted-content");
-    let totalPasted = 0;
-    pastedSpans.forEach((span: any) => {
-      totalPasted += span.innerText.length;
-    });
-
-    const actualPasted = Math.min(totalPasted, totalChars);
-    const actualTyped = totalChars - actualPasted;
-
-    const pastedPercent = Math.round((actualPasted / totalChars) * 100);
-    const typedPercent = 100 - pastedPercent;
-
-    // Side effect: update raw character states to match the DOM
-    // We do this in an effect usually, but for immediate UI sync:
-    if (typedChars === 0 && pastedChars === 0 && totalChars > 0) {
-      setTypedChars(actualTyped);
-      setPastedChars(actualPasted);
-    }
-
-    return { typedPercentage: typedPercent, pastedPercentage: pastedPercent };
-  }, [content, editorRef.current]); // Also depend on ref to catch mount
 
   const integrityScore = useMemo(() => {
     if (pastedPercentage <= 10) return { label: "High", color: "text-green-500" };
