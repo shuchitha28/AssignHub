@@ -116,14 +116,16 @@ router.get("/analytics", protect, async (req, res) => {
         const assignmentData = [];
 
         for (const a of assignments) {
-          const submittedCount = await Submission.countDocuments({
+          const totalStudents = course.students?.length || 0;
+        
+          const submittedStudents = await Submission.distinct("student", {
             assignment: a._id,
             status: {
               $in: ["submitted", "reviewed", "revision_requested"]
             }
           });
-
-          const totalStudents = course.students.length || 0;
+        
+          const submittedCount = submittedStudents.length;
           const notSubmittedCount = Math.max(
             totalStudents - submittedCount,
             0
