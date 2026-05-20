@@ -24,7 +24,7 @@ export interface SubmissionPayload {
   typedChars?: number;
   pastedChars?: number;
   status: "draft" | "submitted";
-  assignmentId?: string;
+  assignment?: string;
   submissionId?: string; // for updates
 }
 
