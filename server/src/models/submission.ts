@@ -85,7 +85,6 @@ const submissionSchema = new mongoose.Schema(
 
     submittedAt: { 
       type: Date, 
-      default: Date.now 
     },
   },
   { timestamps: true }
