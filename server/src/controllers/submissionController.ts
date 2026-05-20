@@ -33,6 +33,10 @@ export const submitAssignment = async (req: any, res: any) => {
 
     const student = req.user._id;
 
+    if (status === "submitted") {
+      req.body.submittedAt = new Date();
+    }
+
     if (id) {
       const updated = await Submission.findOneAndUpdate(
         { _id: id, student },
@@ -77,6 +81,12 @@ export const submitAssignment = async (req: any, res: any) => {
     
       return res.json(updated);
     }
+
+    const submission = await Submission.create({
+      ...req.body,
+      student,
+      status,
+    });
 
     res.status(201).json(submission);
 
