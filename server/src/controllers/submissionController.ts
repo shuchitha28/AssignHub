@@ -29,33 +29,13 @@ import Assignment from "../models/assignment";
 
 export const submitAssignment = async (req: any, res: any) => {
   try {
-    const { id, status = "draft" } = req.body;
+    const { status = "draft" } = req.body;
 
     const student = req.user._id;
 
-    if (status === "submitted") {
-      req.body.submittedAt = new Date();
-    }
-
-    if (id) {
-      const updated = await Submission.findOneAndUpdate(
-        { _id: id, student },
-        {
-          ...req.body,
-          student,
-          status,
-        },
-        {
-          new: true,
-        }
-      );
-
-      return res.json(updated);
-    }
-
     if (req.body.assignment) {
       const assignment = await Assignment.findById(req.body.assignment);
-    
+
       if (assignment?.deadline && new Date() > assignment.deadline) {
         return res.status(400).json({
           message: "Assignment deadline has passed",
@@ -67,26 +47,24 @@ export const submitAssignment = async (req: any, res: any) => {
       assignment: req.body.assignment,
       student,
     });
-    
+
     if (existing) {
-      const updated = await Submission.findByIdAndUpdate(
-        existing._id,
-        {
-          ...req.body,
-          student,
-          status,
-        },
-        { new: true }
-      );
-    
-      return res.json(updated);
+      return res.status(400).json({
+        message: "Submission already exists",
+      });
     }
 
-    const submission = await Submission.create({
+    const payload: any = {
       ...req.body,
       student,
       status,
-    });
+    };
+
+    if (status === "submitted") {
+      payload.submittedAt = new Date();
+    }
+
+    const submission = await Submission.create(payload);
 
     res.status(201).json(submission);
 
@@ -181,22 +159,51 @@ export const reviewSubmission = async (req: any, res: any) => {
   }
 };
 
+// export const updateSubmission = async (req: any, res: any) => {
+//   try {
+//     const { id } = req.params;
+//     const student = req.user._id;
+
+//     if (req.body.status === "submitted" && !req.body.submittedAt) {
+//       req.body.submittedAt = new Date();
+//     }
+    
+//     const updated = await Submission.findOneAndUpdate(
+//       { _id: id, student },
+//       req.body,
+//       { new: true }
+
+//     );
+//     res.json(updated);
+//   } catch (error: any) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
 export const updateSubmission = async (req: any, res: any) => {
   try {
     const { id } = req.params;
     const student = req.user._id;
 
-    if (req.body.status === "submitted" && !req.body.submittedAt) {
-      req.body.submittedAt = new Date();
+    const payload: any = {
+      ...req.body,
+    };
+
+    if (
+      req.body.status === "submitted" &&
+      !req.body.submittedAt
+    ) {
+      payload.submittedAt = new Date();
     }
-    
+
     const updated = await Submission.findOneAndUpdate(
       { _id: id, student },
-      req.body,
+      payload,
       { new: true }
-
     );
+
     res.json(updated);
+
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
