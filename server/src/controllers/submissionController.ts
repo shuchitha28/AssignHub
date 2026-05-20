@@ -29,14 +29,9 @@ import Assignment from "../models/assignment";
 
 export const submitAssignment = async (req: any, res: any) => {
   try {
-    const { id, action } = req.body;
+    const { id, status = "draft" } = req.body;
 
     const student = req.user._id;
-
-    const status =
-      action === "submit"
-        ? "submitted"
-        : "draft";
 
     if (id) {
       const updated = await Submission.findOneAndUpdate(
