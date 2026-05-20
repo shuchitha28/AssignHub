@@ -138,6 +138,14 @@ const submittedCount = Array.from(latestSubmissionMap.values()).filter(
   (s: any) =>
     ["submitted", "reviewed", "revision_requested"].includes(s.status)
 ).length;
+          console.log({
+  assignment: a.title,
+  submittedCount,
+  submissions: submissions.map((s) => ({
+    student: String(s.student),
+    status: s.status,
+  })),
+});
           
           const notSubmittedCount = Math.max(
             totalStudents - submittedCount,
