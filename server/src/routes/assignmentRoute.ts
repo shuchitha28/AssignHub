@@ -120,7 +120,7 @@ router.get("/analytics", protect, async (req, res) => {
           const submittedCount = await Submission.countDocuments({
             assignment: a._id,
             status: {
-              $in: ["submitted", "reviewed", "revision_requested"]
+              $in: ["submitted", "reviewed"]
             }
           });
 
