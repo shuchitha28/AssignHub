@@ -116,13 +116,18 @@ router.get("/analytics", protect, async (req, res) => {
         const assignmentData = [];
 
         for (const a of assignments) {
-          const totalStudents = course.students.length;
           const submittedCount = await Submission.countDocuments({
             assignment: a._id,
             status: {
-              $in: ["submitted", "reviewed"]
+              $in: ["submitted", "reviewed", "revision_requested"]
             }
           });
+
+          const totalStudents = course.students.length || 0;
+          const notSubmittedCount = Math.max(
+            totalStudents - submittedCount,
+            0
+          );
 
           assignmentData.push({
             _id: a._id,
@@ -131,7 +136,7 @@ router.get("/analytics", protect, async (req, res) => {
             dueDate: a.deadline,
             totalMarks: a.totalMarks,
             submitted: submittedCount,
-            notSubmitted: totalStudents - submittedCount,
+            notSubmitted: notSubmittedCout,
             percentage:
               totalStudents > 0
                 ? Math.round((submittedCount / totalStudents) * 100)
