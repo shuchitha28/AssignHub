@@ -138,7 +138,7 @@ router.get("/analytics", protect, async (req, res) => {
             dueDate: a.deadline,
             totalMarks: a.totalMarks,
             submitted: submittedCount,
-            notSubmitted: notSubmittedCout,
+            notSubmitted: notSubmittedCount,
             percentage:
               totalStudents > 0
                 ? Math.round((submittedCount / totalStudents) * 100)
