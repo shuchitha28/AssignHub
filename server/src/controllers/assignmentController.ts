@@ -102,7 +102,7 @@ export const updateAssignment = async (req: any, res: any) => {
   const updated = await Assignment.findByIdAndUpdate(
     req.params.id,
     req.body,
-    { returnDocument: 'after' }
+    { new: true}
   );
 
 
