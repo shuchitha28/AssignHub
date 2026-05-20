@@ -185,6 +185,11 @@ export const updateSubmission = async (req: any, res: any) => {
   try {
     const { id } = req.params;
     const student = req.user._id;
+
+    if (req.body.status === "submitted" && !req.body.submittedAt) {
+      req.body.submittedAt = new Date();
+    }
+    
     const updated = await Submission.findOneAndUpdate(
       { _id: id, student },
       req.body,
