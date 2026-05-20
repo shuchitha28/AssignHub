@@ -72,26 +72,42 @@ export default function Notepad() {
 
   // Auto-save logic
   useEffect(() => {
-    if (isReadOnly || !title.trim() || !content.trim()) return;
-
+    if (
+      isReadOnly ||
+      localStatus === "submitted" ||
+      !title.trim() ||
+      !content.trim()
+    ) {
+      return;
+    }
+  
     const timeout = setTimeout(() => {
       setAutoSaveStatus("saving");
+  
       saveDraftMutation.mutate(undefined, {
         onSuccess: () => setAutoSaveStatus("saved"),
-        onError: () => setAutoSaveStatus("error")
+        onError: () => setAutoSaveStatus("error"),
       });
-    }, 3000); // Save after 3 seconds of inactivity
-
+    }, 3000);
+  
     return () => clearTimeout(timeout);
-  }, [content, title]);
+  
+  }, [content, title, localStatus, isReadOnly]);
 
   const isDeadlinePassed = useMemo(() => {
     if (!assignmentInfo?.deadline) return false;
     return new Date(assignmentInfo.deadline).getTime() < tick;
   }, [assignmentInfo?.deadline, tick]);
 
-  const isReadOnly = editAssignment?.status === "submitted" || editAssignment?.status === "reviewed" || isDeadlinePassed;
-
+ const [localStatus, setLocalStatus] = useState(
+    editAssignment?.status || "draft"
+  );
+  
+  const isReadOnly =
+    localStatus === "submitted" ||
+    localStatus === "reviewed" ||
+    isDeadlinePassed;
+  
   const editorRef = useRef<HTMLDivElement>(null);
 
   // Initialize editor content if editing
@@ -371,7 +387,10 @@ export default function Notepad() {
         pastedPercentage,
         typedChars,
         pastedChars,
-        status: editAssignment?.status === "revision_requested" ? "revision_requested" : "draft",
+        status:
+          localStatus === "revision_requested"
+            ? "revision_requested"
+            : localStatus,
       };
 
       // If we don't have a submission ID yet but we have an assignment template ID
@@ -419,8 +438,16 @@ export default function Notepad() {
         : saveSubmission(payload);
     },
     onSuccess: (res: any) => {
-      toast.success(currentSubmissionId ? "Assignment updated!" : "Assignment submitted!");
+      toast.success(
+        currentSubmissionId
+          ? "Assignment updated!"
+          : "Assignment submitted!"
+      );
+    
+      setLocalStatus("submitted");
+    
       setShowSubmitModal(false);
+    
       if (!currentSubmissionId && res.data?._id) {
         setCurrentSubmissionId(res.data._id);
       }
