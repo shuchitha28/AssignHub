@@ -17,7 +17,7 @@ import { getDashboard } from "../../api/dashboard.api";
 import {
   XAxis,
   YAxis,
- Tooltip,
+  Tooltip,
   ResponsiveContainer,
   CartesianGrid,
   AreaChart,
@@ -41,10 +41,10 @@ const COLORS = [
 ];
 
 export default function Dashboard() {
-  const [isMounted, setIsMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    setMounted(true);
   }, []);
 
   const { data, isLoading } = useQuery({
@@ -52,11 +52,11 @@ export default function Dashboard() {
     queryFn: getDashboard,
   });
 
-  const stats = data?.data;
+  const stats = data?.data || {};
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="flex items-center justify-center min-h-[70vh]">
         <div className="w-12 h-12 border-4 border-[rgb(var(--primary))] border-t-transparent rounded-full animate-spin" />
       </div>
     );
@@ -66,35 +66,29 @@ export default function Dashboard() {
     <div className="space-y-8 pb-20">
 
       {/* HERO */}
-      <div className="p-8 md:p-10 text-white rounded-[2.5rem] bg-gradient-to-br from-[rgb(var(--primary))] to-[rgb(var(--secondary))] shadow-xl relative overflow-hidden">
+      <div className="p-10 rounded-[2.5rem] bg-gradient-to-br from-[rgb(var(--primary))] to-[rgb(var(--secondary))] text-white relative overflow-hidden">
 
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-40 -mt-40" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
-
+        <div className="relative z-10 flex justify-between items-center">
           <div>
             <div className="inline-flex items-center px-4 py-2 bg-white/20 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-4">
               <LayoutDashboard size={14} className="mr-2" />
               Admin Portal
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-black tracking-tight">
+            <h1 className="text-5xl font-black">
               System Insights
             </h1>
 
-            <p className="mt-4 max-w-2xl text-lg opacity-90 leading-relaxed">
-              Real-time LMS analytics dashboard for AssignHub.
-              Monitor engagement, assignments, submissions,
-              and student activity across the platform.
+            <p className="mt-4 opacity-90 max-w-2xl">
+              Advanced LMS analytics dashboard with real-time assignment,
+              submission and plagiarism insights.
             </p>
           </div>
 
-          <div className="hidden lg:flex relative">
-            <div className="absolute inset-0 bg-white/10 blur-3xl rounded-full scale-150" />
-
-            <div className="relative w-32 h-32 rounded-[2rem] bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center">
-              <TrendingUp size={60} />
-            </div>
+          <div className="hidden lg:flex w-32 h-32 rounded-[2rem] bg-white/10 items-center justify-center">
+            <TrendingUp size={60} />
           </div>
         </div>
       </div>
@@ -102,58 +96,45 @@ export default function Dashboard() {
       {/* STATS */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
-        <EnhancedStatCard
+        <StatCard
           label="Students"
-          value={stats?.students || 0}
+          value={stats.students || 0}
           icon={<Users className="text-blue-500" />}
         />
 
-        <EnhancedStatCard
+        <StatCard
           label="Teachers"
-          value={stats?.teachers || 0}
+          value={stats.teachers || 0}
           icon={<User className="text-indigo-500" />}
         />
 
-        <EnhancedStatCard
+        <StatCard
           label="Courses"
-          value={stats?.courses || 0}
+          value={stats.courses || 0}
           icon={<BookOpen className="text-purple-500" />}
         />
 
-        <EnhancedStatCard
+        <StatCard
           label="Subjects"
-          value={stats?.subjects || 0}
+          value={stats.subjects || 0}
           icon={<Layers className="text-pink-500" />}
         />
       </div>
 
-      {/* TOP SECTION */}
+      {/* REGISTRATION + ACTIVITY */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
 
-        {/* REGISTRATION TREND */}
-        <div className="xl:col-span-2 bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+        {/* AREA CHART */}
+        <ChartCard title="Registration Velocity" className="xl:col-span-2">
 
-          <div className="flex items-center justify-between mb-8">
+          <div className="h-[350px]">
 
-            <div>
-              <h2 className="text-2xl font-black text-gray-800 dark:text-white">
-                Registration Velocity
-              </h2>
-
-              <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mt-2">
-                Student Onboarding Trend
-              </p>
-            </div>
-          </div>
-
-          <div className="w-full h-[350px]">
-
-            {isMounted && (
+            {mounted && (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={stats?.trends || []}>
+                <AreaChart data={stats.trends || []}>
 
                   <defs>
-                    <linearGradient id="studentsGradient" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="studentGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop
                         offset="5%"
                         stopColor="rgb(var(--primary))"
@@ -168,20 +149,11 @@ export default function Dashboard() {
                     </linearGradient>
                   </defs>
 
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <CartesianGrid strokeDasharray="3 3" />
 
-                  <XAxis
-                    dataKey="month"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 12 }}
-                  />
+                  <XAxis dataKey="month" />
 
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 12 }}
-                  />
+                  <YAxis />
 
                   <Tooltip />
 
@@ -189,244 +161,233 @@ export default function Dashboard() {
                     type="monotone"
                     dataKey="students"
                     stroke="rgb(var(--primary))"
+                    fill="url(#studentGradient)"
                     strokeWidth={4}
-                    fill="url(#studentsGradient)"
                   />
                 </AreaChart>
               </ResponsiveContainer>
             )}
           </div>
-        </div>
+        </ChartCard>
 
-        {/* ACTIVITY FEED */}
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+        {/* ACTIVITY */}
+        <ChartCard title="Recent Activity">
 
-          <div className="mb-8">
-            <h2 className="text-2xl font-black text-gray-800 dark:text-white">
-              Activity Feed
-            </h2>
+          <div className="space-y-5 max-h-[350px] overflow-y-auto">
 
-            <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mt-2">
-              Recent Activity
-            </p>
-          </div>
+            {(stats.activity || []).map((act: any, idx: number) => (
+              <div key={idx} className="flex gap-4">
 
-          <div className="space-y-6 max-h-[350px] overflow-y-auto pr-2">
-
-            {stats?.activity?.length > 0 ? (
-              stats.activity.map((act: any, idx: number) => (
-                <div key={idx} className="flex gap-4">
-
-                  <div className="w-10 h-10 rounded-2xl bg-purple-100 text-purple-500 flex items-center justify-center flex-shrink-0">
-                    <Activity size={18} />
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-bold text-gray-700 dark:text-gray-200">
-                      {act.text}
-                    </p>
-
-                    <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                      <Calendar size={10} />
-                      {new Date(act.time).toLocaleString()}
-                    </p>
-                  </div>
+                <div className="w-10 h-10 rounded-2xl bg-purple-100 flex items-center justify-center">
+                  <Activity size={18} className="text-purple-500" />
                 </div>
-              ))
-            ) : (
-              <div className="text-center text-gray-400 py-20 font-bold">
-                No activity found
+
+                <div>
+                  <p className="font-bold text-sm dark:text-white">
+                    {act.text}
+                  </p>
+
+                  <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                    <Calendar size={10} />
+                    {new Date(act.time).toLocaleString()}
+                  </p>
+                </div>
               </div>
-            )}
+            ))}
           </div>
-        </div>
+        </ChartCard>
       </div>
 
       {/* PIE CHARTS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        {/* USER DISTRIBUTION */}
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-
-          <h2 className="text-2xl font-black mb-8 text-gray-800 dark:text-white">
-            User Distribution
-          </h2>
+        <ChartCard title="User Distribution">
 
           <div className="h-[350px]">
 
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
+            {mounted && (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
 
-                <Pie
-                  data={stats?.userDistribution || []}
-                  dataKey="value"
-                  nameKey="name"
-                  outerRadius={120}
-                  label
-                >
-                  {(stats?.userDistribution || []).map(
-                    (_: any, index: number) => (
-                      <Cell
-                        key={index}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    )
-                  )}
-                </Pie>
+                  <Pie
+                    data={stats.userDistribution || []}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={120}
+                    label
+                  >
+                    {(stats.userDistribution || []).map(
+                      (_: any, index: number) => (
+                        <Cell
+                          key={index}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      )
+                    )}
+                  </Pie>
 
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </div>
-        </div>
+        </ChartCard>
 
-        {/* SUBMISSION STATUS */}
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-
-          <h2 className="text-2xl font-black mb-8 text-gray-800 dark:text-white">
-            Submission Status
-          </h2>
+        <ChartCard title="Submission Status">
 
           <div className="h-[350px]">
 
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
+            {mounted && (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
 
-                <Pie
-                  data={stats?.submissionStats || []}
-                  dataKey="value"
-                  outerRadius={120}
-                  label
-                >
-                  {(stats?.submissionStats || []).map(
-                    (_: any, index: number) => (
-                      <Cell
-                        key={index}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    )
-                  )}
-                </Pie>
+                  <Pie
+                    data={stats.submissionStats || []}
+                    dataKey="value"
+                    outerRadius={120}
+                    label
+                  >
+                    {(stats.submissionStats || []).map(
+                      (_: any, index: number) => (
+                        <Cell
+                          key={index}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      )
+                    )}
+                  </Pie>
 
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
           </div>
-        </div>
+        </ChartCard>
       </div>
 
       {/* BAR CHART */}
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-
-        <h2 className="text-2xl font-black mb-8 text-gray-800 dark:text-white">
-          Subject Assignments
-        </h2>
+      <ChartCard title="Subject Assignments">
 
         <div className="h-[400px]">
 
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={stats?.subjectAssignments || []}>
+          {mounted && (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.subjectAssignments || []}>
 
-              <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" />
 
-              <XAxis dataKey="subject" />
+                <XAxis dataKey="subject" />
 
-              <YAxis />
+                <YAxis />
 
-              <Tooltip />
+                <Tooltip />
 
-              <Legend />
+                <Legend />
 
-              <Bar
-                dataKey="assignments"
-                fill="rgb(var(--primary))"
-                radius={[10, 10, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+                <Bar
+                  dataKey="assignments"
+                  fill="rgb(var(--primary))"
+                  radius={[10, 10, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
-      </div>
+      </ChartCard>
 
       {/* LINE CHART */}
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-
-        <h2 className="text-2xl font-black mb-8 text-gray-800 dark:text-white">
-          Teacher Paste Analytics
-        </h2>
+      <ChartCard title="Teacher Paste Analytics">
 
         <div className="h-[400px]">
 
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={stats?.teacherPasteUsage || []}>
+          {mounted && (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={stats.teacherPasteUsage || []}>
 
-              <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" />
 
-              <XAxis dataKey="teacher" />
+                <XAxis dataKey="teacher" />
 
-              <YAxis />
+                <YAxis />
 
-              <Tooltip />
+                <Tooltip />
 
-              <Legend />
+                <Legend />
 
-              <Line
-                type="monotone"
-                dataKey="avgPaste"
-                stroke="#ef4444"
-                strokeWidth={4}
-                name="Paste %"
-              />
+                <Line
+                  type="monotone"
+                  dataKey="avgPaste"
+                  stroke="#ef4444"
+                  strokeWidth={4}
+                />
 
-              <Line
-                type="monotone"
-                dataKey="avgTyped"
-                stroke="#10b981"
-                strokeWidth={4}
-                name="Typed %"
-              />
-            </LineChart>
-          </ResponsiveContainer>
+                <Line
+                  type="monotone"
+                  dataKey="avgTyped"
+                  stroke="#10b981"
+                  strokeWidth={4}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
         </div>
-      </div>
+      </ChartCard>
 
       {/* SUBMISSION OVERVIEW */}
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-
-        <h2 className="text-2xl font-black mb-8 text-gray-800 dark:text-white">
-          Student Submission Overview
-        </h2>
+      <ChartCard title="Student Submission Overview">
 
         <div className="h-[350px]">
 
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
+          {mounted && (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
 
-              <Pie
-                data={stats?.submissionOverview || []}
-                dataKey="value"
-                outerRadius={120}
-                label
-              >
-                <Cell fill="#10b981" />
-                <Cell fill="#ef4444" />
-              </Pie>
+                <Pie
+                  data={stats.submissionOverview || []}
+                  dataKey="value"
+                  outerRadius={120}
+                  label
+                >
+                  <Cell fill="#10b981" />
+                  <Cell fill="#ef4444" />
+                </Pie>
 
-              <Tooltip />
-
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+                <Tooltip />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
         </div>
-      </div>
+      </ChartCard>
+    </div>
+  );
+}
+
+/* CARD */
+
+function ChartCard({
+  title,
+  children,
+  className = "",
+}: any) {
+  return (
+    <div
+      className={`bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm ${className}`}
+    >
+      <h2 className="text-2xl font-black mb-8 text-gray-800 dark:text-white">
+        {title}
+      </h2>
+
+      {children}
     </div>
   );
 }
 
 /* STAT CARD */
 
-function EnhancedStatCard({
+function StatCard({
   label,
   value,
   icon,
@@ -436,22 +397,20 @@ function EnhancedStatCard({
       whileHover={{ y: -5 }}
       className="bg-white dark:bg-gray-900 p-6 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm"
     >
-      <div className="flex items-center justify-between mb-5">
+      <div className="flex justify-between items-center mb-5">
 
         <div className="w-14 h-14 rounded-2xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
           {icon}
         </div>
       </div>
 
-      <div>
-        <p className="text-xs uppercase tracking-widest text-gray-400 font-black">
-          {label}
-        </p>
+      <p className="text-xs uppercase tracking-widest text-gray-400 font-black">
+        {label}
+      </p>
 
-        <h3 className="text-4xl font-black mt-2 text-gray-800 dark:text-white">
-          {value}
-        </h3>
-      </div>
+      <h3 className="text-4xl font-black mt-2 text-gray-800 dark:text-white">
+        {value}
+      </h3>
     </motion.div>
   );
 }
