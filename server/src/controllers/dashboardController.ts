@@ -3,7 +3,7 @@ import Assignment from "../models/assignment";
 import Course from "../models/course";
 import Subject from "../models/subject";
 import Submission from "../models/submission";
-import User from "../models/User";
+import User from "../models/user";
 
 export const getStudentDashboard = async (req: any, res: Response) => {
   try {
