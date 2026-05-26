@@ -52,7 +52,7 @@ export default function Dashboard() {
     queryFn: getDashboard,
   });
 
-  const stats = data?.data || {};
+const stats = data || {};
 
   if (isLoading) {
     return (
@@ -82,8 +82,8 @@ export default function Dashboard() {
             </h1>
 
             <p className="mt-4 opacity-90 max-w-2xl">
-              Advanced LMS analytics dashboard with real-time assignment,
-              submission and plagiarism insights.
+              Advanced AMS analytics dashboard with real-time assignment,
+              submission insights.
             </p>
           </div>
 
