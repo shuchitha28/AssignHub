@@ -3,6 +3,7 @@ import Assignment from "../models/assignment";
 import Course from "../models/course";
 import Subject from "../models/subject";
 import Submission from "../models/submission";
+import User from "../models/User";
 
 export const getStudentDashboard = async (req: any, res: Response) => {
   try {
@@ -193,4 +194,176 @@ export const getTeacherDashboard = async (req: any, res: Response) => {
     console.error("TEACHER DASHBOARD ERROR:", err);
     res.status(500).json({ message: "Teacher dashboard error" });
   }
-};
+};
+
+export const getDashboard = async (req: any, res: any) => {
+  try {
+    /* BASIC COUNTS */
+    const students = await User.countDocuments({ role: "student" });
+    const teachers = await User.countDocuments({ role: "teacher" });
+    const courses = await Course.countDocuments();
+    const subjects = await Subject.countDocuments();
+    const assignments = await Assignment.countDocuments();
+
+    /* USER DISTRIBUTION */
+    const userDistribution = [
+      {
+        name: "Students",
+        value: students,
+      },
+      {
+        name: "Teachers",
+        value: teachers,
+      },
+    ];
+
+    /* SUBJECT WISE ASSIGNMENTS */
+    const subjectAssignments = await Assignment.aggregate([
+      {
+        $lookup: {
+          from: "subjects",
+          localField: "subject",
+          foreignField: "_id",
+          as: "subject",
+        },
+      },
+      { $unwind: "$subject" },
+      {
+        $group: {
+          _id: "$subject.name",
+          assignments: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          subject: "$_id",
+          assignments: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    /* SUBMISSION STATUS */
+    const submittedCount = await Submission.countDocuments({
+      status: "submitted",
+    });
+
+    const reviewedCount = await Submission.countDocuments({
+      status: "reviewed",
+    });
+
+    const draftCount = await Submission.countDocuments({
+      status: "draft",
+    });
+
+    const revisionCount = await Submission.countDocuments({
+      status: "revision_requested",
+    });
+
+    const submissionStats = [
+      { name: "Submitted", value: submittedCount },
+      { name: "Reviewed", value: reviewedCount },
+      { name: "Draft", value: draftCount },
+      { name: "Revision", value: revisionCount },
+    ];
+
+    /* TEACHER PASTE ANALYTICS */
+    const teacherPasteUsage = await Submission.aggregate([
+      {
+        $lookup: {
+          from: "assignments",
+          localField: "assignment",
+          foreignField: "_id",
+          as: "assignment",
+        },
+      },
+      { $unwind: "$assignment" },
+
+      {
+        $lookup: {
+          from: "users",
+          localField: "assignment.teacher",
+          foreignField: "_id",
+          as: "teacher",
+        },
+      },
+      { $unwind: "$teacher" },
+
+      {
+        $group: {
+          _id: "$teacher.name",
+          avgPaste: { $avg: "$pastedPercentage" },
+          avgTyped: { $avg: "$typedPercentage" },
+          students: { $sum: 1 },
+        },
+      },
+
+      {
+        $project: {
+          teacher: "$_id",
+          avgPaste: { $round: ["$avgPaste", 2] },
+          avgTyped: { $round: ["$avgTyped", 2] },
+          students: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    /* MONTHLY REGISTRATION TREND */
+    const trends = await User.aggregate([
+      {
+        $match: {
+          role: "student",
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: { $month: "$createdAt" },
+          },
+          students: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          month: "$_id.month",
+          students: 1,
+          _id: 0,
+        },
+      },
+      { $sort: { month: 1 } },
+    ]);
+
+    /* RECENT ACTIVITY */
+    const recentAssignments = await Assignment.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("teacher", "name");
+
+    const activity = recentAssignments.map((a: any) => ({
+      type: "assignment",
+      text: `${a.teacher?.name} added assignment "${a.title}"`,
+      time: a.createdAt,
+    }));
+
+    res.json({
+      students,
+      teachers,
+      courses,
+      subjects,
+      assignments,
+
+      userDistribution,
+      subjectAssignments,
+      submissionStats,
+      teacherPasteUsage,
+      trends,
+      activity,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: "Dashboard fetch failed",
+    });
+  }
+};
