@@ -267,6 +267,23 @@ export const getDashboard = async (req: any, res: any) => {
       { name: "Revision", value: revisionCount },
     ];
 
+    const totalStudents = await User.countDocuments({
+      role: "student",
+    });
+    
+    const submittedStudents = await Submission.distinct("student");
+    
+    const submissionOverview = [
+      {
+        name: "Submitted",
+        value: submittedStudents.length,
+      },
+      {
+        name: "Not Submitted",
+        value: totalStudents - submittedStudents.length,
+      },
+    ];
+
     /* TEACHER PASTE ANALYTICS */
     const teacherPasteUsage = await Submission.aggregate([
       {
@@ -356,6 +373,7 @@ export const getDashboard = async (req: any, res: any) => {
       userDistribution,
       subjectAssignments,
       submissionStats,
+      submissionOverview,
       teacherPasteUsage,
       trends,
       activity,
