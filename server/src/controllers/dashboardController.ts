@@ -1,4 +1,4 @@
-/*import { Request, Response } from "express";
+import { Request, Response } from "express";
 import Assignment from "../models/assignment";
 import Course from "../models/course";
 import Subject from "../models/subject";
