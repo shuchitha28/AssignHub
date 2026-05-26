@@ -52,7 +52,7 @@ export default function Dashboard() {
     queryFn: getDashboard,
   });
 
-const stats = data || {};
+const stats: any = data?.data || {};
 
   if (isLoading) {
     return (
