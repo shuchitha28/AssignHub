@@ -5,8 +5,10 @@ const submissionSchema = new mongoose.Schema(
     assignment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Assignment",
-      required: true,
-    },
+      required: function () {
+        return this.status === "submitted";
+      }
+    }
 
     student: {
       type: mongoose.Schema.Types.ObjectId,
