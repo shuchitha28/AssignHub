@@ -176,17 +176,6 @@ useEffect(() => {
       }
     }
   }, [content, startTime, typedChars]);
-
-  const [assignments, setAssignments] = useState<any[]>([]);
-  const [selectedAssignment, setSelectedAssignment] = useState(
-    assignmentInfo?._id || ""
-  );
-  
-  useEffect(() => {
-  getAssignments().then((res) => {
-    setAssignments(res.data);
-  });
-}, []);
   
   const [activeStyles, setActiveStyles] = useState({
     bold: false,
@@ -398,7 +387,6 @@ useEffect(() => {
   };
 
 const assignmentId =
-  selectedAssignment ||
   assignment?._id ||
   editAssignment?.assignment?._id ||
   editAssignment?.assignment ||
@@ -613,29 +601,6 @@ const handleSubmit = () => {
             </motion.div>
           )}
 
-            {/* Assignment Selector */}
-            {!assignmentInfo && !isReadOnly && (
-              <div className="bg-white dark:bg-gray-900 rounded-3xl p-4 shadow-sm border border-gray-100 dark:border-gray-800">
-                <label className="block text-xs font-bold uppercase tracking-widest text-primary mb-3">
-                  Select Assignment
-                </label>
-          
-                <select
-                  value={selectedAssignment}
-                  onChange={(e) => setSelectedAssignment(e.target.value)}
-                  className="w-full p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 outline-none"
-                >
-                  <option value="">Select Assignment</option>
-          
-                  {assignments.map((asg: any) => (
-                    <option key={asg._id} value={asg._id}>
-                      {asg.title} ({asg.subject.code})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-          
           {/* Title Input */}
           <div className="bg-white dark:bg-gray-900 rounded-3xl p-2 shadow-sm border border-gray-100 dark:border-gray-800">
             <input
