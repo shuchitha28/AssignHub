@@ -396,9 +396,7 @@ useEffect(() => {
   const saveDraftMutation = useMutation({
     mutationFn: () => {
       if (isDeadlinePassed) throw new Error("Deadline has passed");
-        if (!currentSubmissionId && !assignmentId) {
-    throw new Error("Assignment ID missing");
-  }
+
       const payload: any = {
         title,
         content: editorRef.current?.innerHTML || content,
@@ -414,8 +412,7 @@ useEffect(() => {
             : "draft",
       };
 
-      // If we don't have a submission ID yet but we have an assignment template ID
-      if (!currentSubmissionId && assignmentId) {
+if (assignmentId) {
   payload.assignment = assignmentId;
 }
 
@@ -480,10 +477,6 @@ if (!currentSubmissionId && assignmentId) {
   });
 
 const handleSave = () => {
-  if (!assignmentId && !currentSubmissionId) {
-    return toast.error("Missing assignment reference");
-  }
-
   if (isDeadlinePassed) {
     return toast.error("Deadline has passed. Cannot save draft.");
   }
