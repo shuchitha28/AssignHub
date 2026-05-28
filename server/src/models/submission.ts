@@ -7,8 +7,8 @@ const submissionSchema = new mongoose.Schema(
       ref: "Assignment",
       required: function () {
         return this.status === "submitted";
-      }
-    }
+      },
+    },
 
     student: {
       type: mongoose.Schema.Types.ObjectId,
@@ -92,6 +92,14 @@ const submissionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-submissionSchema.index({ assignment: 1, student: 1 }, { unique: true });
+submissionSchema.index(
+  { assignment: 1, student: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      assignment: { $exists: true, $ne: null }
+    }
+  }
+);
 
 export default mongoose.model("Submission", submissionSchema);
