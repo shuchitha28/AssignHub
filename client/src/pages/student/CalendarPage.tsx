@@ -81,14 +81,27 @@ export default function CalendarPage() {
     onError: () => toast.error("Failed to submit assignment"),
   });
 
-    const getDraftsForAssignment = (assignmentId: string) => {
-    return mySubmissions.filter(
-      (s: any) =>
-        s.status === "draft" &&
-        (s.assignment?._id === assignmentId ||
-          s.assignment === assignmentId)
-    );
-  };
+const getDraftsForAssignment = (assignmentId: string) => {
+  return mySubmissions.filter((s: any) => {
+    // only drafts
+    if (s.status !== "draft") return false;
+
+    // normal linked draft
+    if (
+      s.assignment?._id === assignmentId ||
+      s.assignment === assignmentId
+    ) {
+      return true;
+    }
+
+    // unlinked draft (no assignment id)
+    if (!s.assignment) {
+      return true;
+    }
+
+    return false;
+  });
+};
 
   const getSubmissionStatus = (assignmentId: string) => {
     const sub = mySubmissions.find((s: any) => s.assignment?._id === assignmentId || s.assignment === assignmentId);
