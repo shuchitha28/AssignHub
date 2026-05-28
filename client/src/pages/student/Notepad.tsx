@@ -448,7 +448,6 @@ if (assignmentId) {
         typedChars,
         pastedChars,
         status: "submitted",
-        assignment: assignmentId,
       };
     if (assignmentId) {
       payload.assignment = assignmentId;
@@ -495,10 +494,6 @@ const handleSave = () => {
 };
 
 const handleSubmit = () => {
-  if (!assignmentId && !currentSubmissionId) {
-    return toast.error("Missing assignment reference");
-  }
-
   if (isDeadlinePassed) {
     return toast.error("Deadline has passed. Cannot submit assignment.");
   }
