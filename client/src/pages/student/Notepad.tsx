@@ -59,11 +59,6 @@ export default function Notepad() {
   const [wpm, setWpm] = useState(editAssignment?.wpm || 0);
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
-  const [assignments, setAssignments] = useState<any[]>([]);
-  const [selectedAssignment, setSelectedAssignment] = useState(
-    assignmentInfo?._id || ""
-  );
-  
    const assignmentInfo =
     assignment ||
     editAssignment?.assignment ||
@@ -121,12 +116,6 @@ const { typedPercentage, pastedPercentage } = useMemo(() => {
     pastedPercentage: pastedPercent,
   };
 }, [content]);
-
-  useEffect(() => {
-  getAssignments().then((res) => {
-    setAssignments(res.data);
-  });
-}, []);
   
 // Auto-save logic
 useEffect(() => {
@@ -188,6 +177,17 @@ useEffect(() => {
     }
   }, [content, startTime, typedChars]);
 
+  const [assignments, setAssignments] = useState<any[]>([]);
+  const [selectedAssignment, setSelectedAssignment] = useState(
+    assignmentInfo?._id || ""
+  );
+  
+  useEffect(() => {
+  getAssignments().then((res) => {
+    setAssignments(res.data);
+  });
+}, []);
+  
   const [activeStyles, setActiveStyles] = useState({
     bold: false,
     italic: false,
