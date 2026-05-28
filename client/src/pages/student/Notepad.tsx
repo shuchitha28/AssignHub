@@ -28,7 +28,7 @@ import {
 import toast from "react-hot-toast";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
-import { saveSubmission, updateSubmission, getAssignments } from "../../api/assignment.api";
+import { saveSubmission, updateSubmission } from "../../api/assignment.api";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import { openPDF } from "../../utils/file";
