@@ -411,7 +411,7 @@ useEffect(() => {
         status:
           localStatus === "revision_requested"
             ? "revision_requested"
-            : localStatus,
+            : "draft",
       };
 
       // If we don't have a submission ID yet but we have an assignment template ID
@@ -451,6 +451,7 @@ useEffect(() => {
         typedChars,
         pastedChars,
         status: "submitted",
+        assignment: assignmentId,
       };
 if (!currentSubmissionId && assignmentId) {
   payload.assignment = assignmentId;
