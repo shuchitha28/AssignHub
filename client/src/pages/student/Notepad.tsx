@@ -450,14 +450,20 @@ if (assignmentId) {
         status: "submitted",
         assignment: assignmentId,
       };
-if (!currentSubmissionId && assignmentId) {
-  payload.assignment = assignmentId;
-}
+    if (assignmentId) {
+      payload.assignment = assignmentId;
+    }
+    // CASE 1:
+    // Draft already exists → update it to submitted
+    if (currentSubmissionId) {
+      return updateSubmission(currentSubmissionId, payload);
+    }
 
-      return currentSubmissionId
-        ? updateSubmission(currentSubmissionId, payload)
-        : saveSubmission(payload);
-    },
+    // CASE 2:
+    // No draft yet → create directly as submitted
+    return saveSubmission(payload);
+  },
+
     onSuccess: (res: any) => {
       toast.success(
         currentSubmissionId
