@@ -386,10 +386,19 @@ useEffect(() => {
     }
   };
 
+  const assignmentId =
+  assignment?._id ||
+  editAssignment?.assignment?._id ||
+  editAssignment?.assignment ||
+  null;
+  
   /* ─── API mutations ─── */
   const saveDraftMutation = useMutation({
     mutationFn: () => {
       if (isDeadlinePassed) throw new Error("Deadline has passed");
+        if (!currentSubmissionId && !assignmentId) {
+    throw new Error("Assignment ID missing");
+  }
       const payload: any = {
         title,
         content: editorRef.current?.innerHTML || content,
@@ -406,9 +415,9 @@ useEffect(() => {
       };
 
       // If we don't have a submission ID yet but we have an assignment template ID
-      if (!currentSubmissionId && assignment?._id) {
-        payload.assignment = assignment._id;
-      }
+      if (!currentSubmissionId && assignmentId) {
+  payload.assignment = assignmentId;
+}
 
       return currentSubmissionId
         ? updateSubmission(currentSubmissionId, payload)
@@ -429,6 +438,9 @@ useEffect(() => {
   const submitMutation = useMutation({
     mutationFn: () => {
       if (isDeadlinePassed) throw new Error("Deadline has passed");
+        if (!currentSubmissionId && !assignmentId) {
+    throw new Error("Assignment ID missing");
+  }
       const payload: any = {
         title,
         content: editorRef.current?.innerHTML || content,
@@ -440,10 +452,9 @@ useEffect(() => {
         pastedChars,
         status: "submitted",
       };
-
-      if (!currentSubmissionId && assignment?._id) {
-        payload.assignment = assignment._id;
-      }
+if (!currentSubmissionId && assignmentId) {
+  payload.assignment = assignmentId;
+}
 
       return currentSubmissionId
         ? updateSubmission(currentSubmissionId, payload)
@@ -467,18 +478,41 @@ useEffect(() => {
     onError: () => toast.error("Failed to submit assignment"),
   });
 
-  const handleSave = () => {
-    if (isDeadlinePassed) return toast.error("Deadline has passed. Cannot save draft.");
-    if (!title.trim()) return toast.error("Please enter a title");
-    saveDraftMutation.mutate();
-  };
+const handleSave = () => {
+  if (!assignmentId && !currentSubmissionId) {
+    return toast.error("Missing assignment reference");
+  }
 
-  const handleSubmit = () => {
-    if (isDeadlinePassed) return toast.error("Deadline has passed. Cannot submit assignment.");
-    if (!title.trim()) return toast.error("Please enter a title");
-    if (!content.trim()) return toast.error("Please write some content");
-    setShowSubmitModal(true);
-  };
+  if (isDeadlinePassed) {
+    return toast.error("Deadline has passed. Cannot save draft.");
+  }
+
+  if (!title.trim()) {
+    return toast.error("Please enter a title");
+  }
+
+  saveDraftMutation.mutate();
+};
+
+const handleSubmit = () => {
+  if (!assignmentId && !currentSubmissionId) {
+    return toast.error("Missing assignment reference");
+  }
+
+  if (isDeadlinePassed) {
+    return toast.error("Deadline has passed. Cannot submit assignment.");
+  }
+
+  if (!title.trim()) {
+    return toast.error("Please enter a title");
+  }
+
+  if (!content.trim()) {
+    return toast.error("Please write some content");
+  }
+
+  setShowSubmitModal(true);
+};
 
   return (
     <div className="min-h-screen bg-theme -m-6 p-6 font-sans relative">
