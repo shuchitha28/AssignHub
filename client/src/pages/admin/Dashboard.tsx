@@ -21,6 +21,8 @@ import {
   Bar,
   LineChart,
   Line,
+  ComposedChart,
+  Legend,
 } from "recharts";
 
   const COLORS = [
@@ -318,6 +320,102 @@ export default function Dashboard() {
     </PieChart>
   </ResponsiveContainer>
 </div>
+{/* SUBJECT & COURSE SUBMISSION ANALYTICS */}
+
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4 }}
+  className="lg:col-span-2 bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden"
+>
+  <div className="absolute top-0 right-0 w-40 h-40 bg-[rgb(var(--primary))]/5 blur-3xl rounded-full" />
+
+  <div className="relative z-10">
+    <div className="mb-8">
+      <h2 className="text-2xl font-black text-gray-800 dark:text-white tracking-tight">
+        Submission Status by Subject & Course
+      </h2>
+
+      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+        Academic Submission Analytics
+      </p>
+    </div>
+
+    {stats?.submissionStatusBySubject?.length > 0 ? (
+      <ResponsiveContainer width="100%" height={420}>
+        <BarChart data={stats.submissionStatusBySubject}>
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="#f0f0f0"
+          />
+
+          <XAxis
+            dataKey="subject"
+            angle={-15}
+            textAnchor="end"
+            interval={0}
+            height={70}
+            tick={{
+              fontSize: 11,
+              fontWeight: 700,
+              fill: "#9ca3af"
+            }}
+          />
+
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{
+              fontSize: 11,
+              fontWeight: 700,
+              fill: "#9ca3af"
+            }}
+          />
+
+          <Tooltip
+            contentStyle={{
+              borderRadius: "20px",
+              border: "none",
+              boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
+              fontWeight: 700
+            }}
+          />
+
+          <Legend />
+
+          <Bar
+            dataKey="submitted"
+            fill="#8b5cf6"
+            radius={[6, 6, 0, 0]}
+          />
+
+          <Bar
+            dataKey="reviewed"
+            fill="#10b981"
+            radius={[6, 6, 0, 0]}
+          />
+
+          <Bar
+            dataKey="draft"
+            fill="#f59e0b"
+            radius={[6, 6, 0, 0]}
+          />
+
+          <Bar
+            dataKey="revision_requested"
+            fill="#ef4444"
+            radius={[6, 6, 0, 0]}
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    ) : (
+      <div className="h-[350px] flex items-center justify-center text-gray-400 font-bold">
+        No submission analytics available
+      </div>
+    )}
+  </div>
+</motion.div>
 
 </div>
     </div>
