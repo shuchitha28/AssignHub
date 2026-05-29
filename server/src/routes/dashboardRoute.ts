@@ -163,6 +163,64 @@ const submissionDistribution = await Submission.aggregate([
     }
   }
 ]);
+    // =============================
+// SUBJECT + COURSE SUBMISSION STATUS
+// =============================
+
+const submissionStatusBySubject = await Submission.aggregate([
+  {
+    $lookup: {
+      from: "assignments",
+      localField: "assignment",
+      foreignField: "_id",
+      as: "assignment"
+    }
+  },
+  { $unwind: "$assignment" },
+
+  {
+    $lookup: {
+      from: "subjects",
+      localField: "assignment.subject",
+      foreignField: "_id",
+      as: "subject"
+    }
+  },
+  { $unwind: "$subject" },
+
+  {
+    $lookup: {
+      from: "courses",
+      localField: "subject.course",
+      foreignField: "_id",
+      as: "course"
+    }
+  },
+  { $unwind: "$course" },
+
+  {
+    $group: {
+      _id: {
+        subject: "$subject.name",
+        course: "$course.name",
+        status: "$status"
+      },
+      count: { $sum: 1 }
+    }
+  },
+
+  {
+    $project: {
+      _id: 0,
+      subject: "$_id.subject",
+      course: "$_id.course",
+      status: "$_id.status",
+      count: 1
+    }
+  },
+
+  { $sort: { course: 1, subject: 1 } }
+]);
     
     res.json({
       students,
@@ -175,13 +233,18 @@ const submissionDistribution = await Submission.aggregate([
   pasteAnalytics,
   assignmentPerTeacher,
   userDistribution,
-  submissionDistribution
+  submissionDistribution,
+
+  submissionStatusBySubject
     });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
+
+
+
 
 
 router.get(
