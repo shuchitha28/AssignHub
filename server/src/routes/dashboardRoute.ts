@@ -163,7 +163,8 @@ const submissionDistribution = await Submission.aggregate([
     }
   }
 ]);
-    // =============================
+
+// =============================
 // SUBJECT + COURSE SUBMISSION STATUS
 // =============================
 
@@ -202,10 +203,32 @@ const submissionStatusBySubject = await Submission.aggregate([
     $group: {
       _id: {
         subject: "$subject.name",
-        course: "$course.name",
-        status: "$status"
+        course: "$course.name"
       },
-      count: { $sum: 1 }
+
+      submitted: {
+        $sum: {
+          $cond: [{ $eq: ["$status", "submitted"] }, 1, 0]
+        }
+      },
+
+      reviewed: {
+        $sum: {
+          $cond: [{ $eq: ["$status", "reviewed"] }, 1, 0]
+        }
+      },
+
+      draft: {
+        $sum: {
+          $cond: [{ $eq: ["$status", "draft"] }, 1, 0]
+        }
+      },
+
+      revision_requested: {
+        $sum: {
+          $cond: [{ $eq: ["$status", "revision_requested"] }, 1, 0]
+        }
+      }
     }
   },
 
@@ -214,12 +237,19 @@ const submissionStatusBySubject = await Submission.aggregate([
       _id: 0,
       subject: "$_id.subject",
       course: "$_id.course",
-      status: "$_id.status",
-      count: 1
+      submitted: 1,
+      reviewed: 1,
+      draft: 1,
+      revision_requested: 1
     }
   },
 
-  { $sort: { course: 1, subject: 1 } }
+  {
+    $sort: {
+      course: 1,
+      subject: 1
+    }
+  }
 ]);
     
     res.json({
