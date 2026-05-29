@@ -113,7 +113,7 @@ export default function Dashboard() {
         <div className="lg:col-span-2 bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <div className="space-y-1">
-              <h2 className="text-2xl font-black text-gray-800 dark:text-white tracking-tight">Registration Velocity</h2>
+              <h2 className="text-2xl font-black text-gray-800 dark:text-white tracking-tight">Registration Analytics</h2>
               <p className="text-xs text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
                 <TrendingUp size={14} className="text-green-500" /> Student Onboarding (Last 1 Months)
               </p>
