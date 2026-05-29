@@ -2,8 +2,6 @@ import express from "express";
 import Course from "../models/course";
 import Subject from "../models/subject";
 import User from "../models/user";
-import Assignment from "../models/assignment";
-import Submission from "../models/submission";
 import { protect } from "../middleware/auth";
 import { getStudentDashboard, getTeacherDashboard } from "../controllers/dashboardController";
 import { allowRoles } from "../middleware/role";
@@ -71,103 +69,14 @@ router.get("/", protect, async (req, res) => {
       ...recentUsers.map(u => ({ type: 'user', text: `New ${u.role} joined: ${u.name}`, time: u.createdAt })),
       ...recentCourses.map(c => ({ type: 'course', text: `Course created: ${c.name}`, time: c.createdAt }))
     ].sort((a: any, b: any) => b.time - a.time);
-
-    const courseDistribution = await Course.aggregate([
-  {
-    $project: {
-      name: 1,
-      studentsCount: { $size: "$students" }
-    }
-  },
-  {
-    $sort: { studentsCount: -1 }
-  }
-]);
-
-    const totalAssignments = await Assignment.countDocuments();
-
-const reviewedSubmissions = await Submission.countDocuments({
-  status: "reviewed"
-});
-
-const pendingSubmissions = await Submission.countDocuments({
-  status: "submitted"
-});
-
-const draftSubmissions = await Submission.countDocuments({
-  status: "draft"
-});
-
-const assignmentStatus = [
-  {
-    name: "Reviewed",
-    value: reviewedSubmissions
-  },
-  {
-    name: "Pending",
-    value: pendingSubmissions
-  },
-  {
-    name: "Draft",
-    value: draftSubmissions
-  }
-];
-
-    const thirtyDaysAgo = new Date();
-thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-const assignmentTrend = await Assignment.aggregate([
-  {
-    $match: {
-      createdAt: { $gte: thirtyDaysAgo }
-    }
-  },
-  {
-    $group: {
-      _id: {
-        $dateToString: {
-          format: "%Y-%m-%d",
-          date: "$createdAt"
-        }
-      },
-      count: { $sum: 1 }
-    }
-  },
-  {
-    $sort: { _id: 1 }
-  }
-]);
-
-    const performanceAnalytics = await Submission.aggregate([
-  {
-    $match: {
-      marks: { $exists: true }
-    }
-  },
-  {
-    $group: {
-      _id: null,
-      avgMarks: { $avg: "$marks" },
-      avgWpm: { $avg: "$wpm" },
-      avgTypedPercentage: { $avg: "$typedPercentage" }
-    }
-  }
-]);
-    
+  
     res.json({
       students,
       teachers,
       courses,
       subjects,
       trends: fullTrends,
-      activity,
-        courseDistribution,
-  assignmentStatus,
-  assignmentTrend,
-  performance: performanceAnalytics[0] || {
-    avgMarks: 0,
-    avgWpm: 0,
-    avgTypedPercentage: 0
+      activity
     });
   } catch (err) {
     console.error(err);
