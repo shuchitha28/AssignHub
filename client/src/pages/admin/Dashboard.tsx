@@ -20,8 +20,7 @@ import {
   BarChart,
   Bar,
   LineChart,
-  Line,
-  ComposedChart
+  Line
 } from "recharts";
 
   const COLORS = [
