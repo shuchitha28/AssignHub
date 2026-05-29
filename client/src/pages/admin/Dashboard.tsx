@@ -12,15 +12,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   AreaChart,
-  Area,
-    PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  Legend
+  Area
 } from "recharts";
 
 export default function Dashboard() {
@@ -193,139 +185,9 @@ export default function Dashboard() {
               </div>
             )}
           </div>
-
         </div>
       </div>
-      {/* ADVANCED ANALYTICS */}
-<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-  {/* COURSE DISTRIBUTION */}
-  <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-    <div className="mb-6">
-      <h2 className="text-2xl font-black">Course Enrollment</h2>
-      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-        Students per Course
-      </p>
-    </div>
-
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={stats?.courseDistribution || []}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
-        <Bar
-          dataKey="studentsCount"
-          radius={[10, 10, 0, 0]}
-          fill="rgb(var(--primary))"
-        />
-      </BarChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* ASSIGNMENT STATUS */}
-  <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-    <div className="mb-6">
-      <h2 className="text-2xl font-black">Submission Status</h2>
-      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-        Review Progress
-      </p>
-    </div>
-
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart>
-        <Pie
-          data={stats?.assignmentStatus || []}
-          dataKey="value"
-          nameKey="name"
-          outerRadius={100}
-          label
-        >
-          {(stats?.assignmentStatus || []).map((_: any, index: number) => (
-            <Cell
-              key={index}
-              fill={
-                index === 0
-                  ? "#10b981"
-                  : index === 1
-                    ? "#f59e0b"
-                    : "#6366f1"
-              }
-            />
-          ))}
-        </Pie>
-
-        <Tooltip />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* ASSIGNMENT TREND */}
-  <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-    <div className="mb-6">
-      <h2 className="text-2xl font-black">Assignment Activity</h2>
-      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-        Last 30 Days
-      </p>
-    </div>
-
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={stats?.assignmentTrend || []}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="_id" hide />
-        <YAxis />
-        <Tooltip />
-
-        <Line
-          type="monotone"
-          dataKey="count"
-          stroke="rgb(var(--primary))"
-          strokeWidth={4}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-
-  {/* PERFORMANCE ANALYTICS */}
-  <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-    <div className="mb-6">
-      <h2 className="text-2xl font-black">Performance Metrics</h2>
-      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-        Student Productivity
-      </p>
-    </div>
-
-    <div className="grid grid-cols-3 gap-6 mt-10">
-      <div className="text-center">
-        <h3 className="text-4xl font-black text-[rgb(var(--primary))]">
-          {Math.round(stats?.performance?.avgMarks || 0)}
-        </h3>
-        <p className="text-xs font-bold uppercase text-gray-400 mt-2">
-          Avg Marks
-        </p>
-      </div>
-
-      <div className="text-center">
-        <h3 className="text-4xl font-black text-green-500">
-          {Math.round(stats?.performance?.avgWpm || 0)}
-        </h3>
-        <p className="text-xs font-bold uppercase text-gray-400 mt-2">
-          Avg WPM
-        </p>
-      </div>
-
-      <div className="text-center">
-        <h3 className="text-4xl font-black text-purple-500">
-          {Math.round(stats?.performance?.avgTypedPercentage || 0)}%
-        </h3>
-        <p className="text-xs font-bold uppercase text-gray-400 mt-2">
-          Typed %
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
+     
     </div>
   );
 }
