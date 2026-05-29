@@ -70,7 +70,12 @@ router.get("/", protect, async (req, res) => {
     const activity = [
       ...recentUsers.map(u => ({ type: 'user', text: `New ${u.role} joined: ${u.name}`, time: u.createdAt })),
       ...recentCourses.map(c => ({ type: 'course', text: `Course created: ${c.name}`, time: c.createdAt }))
-    ].sort((a: any, b: any) => b.time - a.time);
+    ].sort((a: any, b: any) => {
+  return (
+    new Date(b.time).getTime() -
+    new Date(a.time).getTime()
+  );
+});
 
     // =============================
 // TEACHER PASTE ANALYTICS
