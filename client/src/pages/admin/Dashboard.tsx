@@ -120,7 +120,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="w-full relative min-h-[300px]">
+          <div className="w-full relative min-h-[500px]">
             {isMounted && (
               <ResponsiveContainer width="100%" aspect={3}>
                 <AreaChart data={stats?.trends || []}>
