@@ -208,7 +208,7 @@ export default function Dashboard() {
   <div className="mb-6">
     <h2 className="text-2xl font-black">Paste Abuse Analytics</h2>
     <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-      Students using &gt;60% pasted content
+      Students using &gt;30% pasted content
     </p>
   </div>
 
