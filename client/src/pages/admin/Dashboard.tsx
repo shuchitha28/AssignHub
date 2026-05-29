@@ -12,10 +12,25 @@ import {
   ResponsiveContainer,
   CartesianGrid,
   AreaChart,
-  Area
+  Area,  
+  PieChart,
+  Pie,
+  Cell,
+  Legend,
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
 } from "recharts";
 
 export default function Dashboard() {
+  const COLORS = [
+  "#8b5cf6",
+  "#06b6d4",
+  "#ec4899",
+  "#10b981",
+  "#f59e0b",
+];
 
   const [isMounted, setIsMounted] = useState(false);
 
@@ -187,7 +202,124 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-     
+           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+     {/* PASTE ANALYTICS */}
+<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+  <div className="mb-6">
+    <h2 className="text-2xl font-black">Paste Abuse Analytics</h2>
+    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+      Students using &gt;60% pasted content
+    </p>
+  </div>
+
+  <ResponsiveContainer width="100%" height={300}>
+    <LineChart data={stats?.pasteAnalytics || []}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis
+  dataKey="_id"
+  angle={-15}
+  textAnchor="end"
+  interval={0}
+  height={60}
+  tick={{ fontSize: 11 }}
+/>
+      <YAxis />
+      <Tooltip />
+      <Line
+        type="monotone"
+        dataKey="count"
+        stroke="rgb(var(--primary))"
+        strokeWidth={4}
+      />
+    </LineChart>
+  </ResponsiveContainer>
+</div>
+    {/* ASSIGNMENT CREATION */}
+<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+  <div className="mb-6">
+    <h2 className="text-2xl font-black">Assignments by Teachers</h2>
+  </div>
+
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart data={stats?.assignmentPerTeacher || []}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis
+  dataKey="_id"
+  angle={-15}
+  textAnchor="end"
+  interval={0}
+  height={60}
+  tick={{ fontSize: 11 }}
+/>
+      <YAxis />
+      <Tooltip />
+
+      <Bar
+        dataKey="assignments"
+        fill="rgb(var(--primary))"
+        radius={[10, 10, 0, 0]}
+      />
+    </BarChart>
+  </ResponsiveContainer>
+</div>  
+      {/* USER DISTRIBUTION */}
+<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+  <div className="mb-6">
+    <h2 className="text-2xl font-black">User Distribution</h2>
+  </div>
+
+  <ResponsiveContainer width="100%" height={320}>
+    <PieChart>
+      <Pie
+        data={stats?.userDistribution || []}
+        dataKey="value"
+        nameKey="_id"
+        outerRadius={120}
+        label
+      >
+        {(stats?.userDistribution || []).map((_: any, index: number) => (
+          <Cell
+            key={index}
+            fill={COLORS[index % COLORS.length]}
+          />
+        ))}
+      </Pie>
+
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+</div>
+      {/* SUBMISSION STATUS */}
+<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+  <div className="mb-6">
+    <h2 className="text-2xl font-black">Submission Status</h2>
+  </div>
+
+  <ResponsiveContainer width="100%" height={320}>
+    <PieChart>
+      <Pie
+        data={stats?.submissionDistribution || []}
+        dataKey="value"
+        nameKey="_id"
+        outerRadius={120}
+        label
+      >
+        {(stats?.submissionDistribution || []).map((_: any, index: number) => (
+          <Cell
+            key={index}
+            fill={COLORS[index % COLORS.length]}
+          />
+        ))}
+      </Pie>
+
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+</div>
+
+</div>
     </div>
   );
 }
