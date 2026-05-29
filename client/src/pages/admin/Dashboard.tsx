@@ -290,22 +290,58 @@ export default function Dashboard() {
     </PieChart>
   </ResponsiveContainer>
 </div>
-      {/* SUBMISSION STATUS */}
+{/* COURSE DISTRIBUTION */}
 <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
   <div className="mb-6">
-    <h2 className="text-2xl font-black">Submission Status</h2>
+    <h2 className="text-2xl font-black">Course Distribution</h2>
+
+    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+      Subjects per Course
+    </p>
   </div>
 
   <ResponsiveContainer width="100%" height={320}>
     <PieChart>
       <Pie
-        data={stats?.submissionDistribution || []}
+        data={stats?.courseDistribution || []}
         dataKey="value"
         nameKey="_id"
         outerRadius={120}
         label
       >
-        {(stats?.submissionDistribution || []).map((_: any, index: number) => (
+        {(stats?.courseDistribution || []).map((_: any, index: number) => (
+          <Cell
+            key={index}
+            fill={COLORS[index % COLORS.length]}
+          />
+        ))}
+      </Pie>
+
+      <Tooltip />
+      <Legend />
+    </PieChart>
+  </ResponsiveContainer>
+</div>
+             {/* SUBJECT DISTRIBUTION */}
+<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+  <div className="mb-6">
+    <h2 className="text-2xl font-black">Subject Distribution</h2>
+
+    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+      Assignments per Subject
+    </p>
+  </div>
+
+  <ResponsiveContainer width="100%" height={320}>
+    <PieChart>
+      <Pie
+        data={stats?.subjectDistribution || []}
+        dataKey="value"
+        nameKey="_id"
+        outerRadius={120}
+        label
+      >
+        {(stats?.subjectDistribution || []).map((_: any, index: number) => (
           <Cell
             key={index}
             fill={COLORS[index % COLORS.length]}
