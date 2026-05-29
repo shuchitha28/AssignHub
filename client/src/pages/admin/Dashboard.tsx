@@ -332,41 +332,6 @@ export default function Dashboard() {
     </PieChart>
   </ResponsiveContainer>
 </div>
-             {/* SUBJECT DISTRIBUTION */}
-<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-  <div className="mb-6">
-    <h2 className="text-2xl font-black">Subject Distribution</h2>
-
-    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-      Assignments per Subject
-    </p>
-  </div>
-
-  <ResponsiveContainer width="100%" height={320}>
-    <PieChart>
-      <Pie
-        data={stats?.subjectDistribution || []}
-        dataKey="value"
-        nameKey="label"
-        outerRadius={120}
-        label
-      >
-        {(stats?.subjectDistribution || []).map((_: any, index: number) => (
-          <Cell
-            key={index}
-            fill={COLORS[index % COLORS.length]}
-          />
-        ))}
-      </Pie>
-
-      <Tooltip
-        formatter={(value: any) => [`${value} assignments`, "Total"]}
-        labelFormatter={(label: any) => label}
-      />
-      <Legend />
-    </PieChart>
-  </ResponsiveContainer>
-</div>
 
   {/* ASSIGNMENT CREATION */}
 <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
@@ -378,13 +343,13 @@ export default function Dashboard() {
     <BarChart data={stats?.assignmentPerTeacher || []}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis
-  dataKey="_id"
-  angle={-15}
-  textAnchor="end"
-  interval={0}
-  height={60}
-  tick={{ fontSize: 11 }}
-/>
+        dataKey="_id"
+        angle={-15}
+        textAnchor="end"
+        interval={0}
+        height={60}
+        tick={{ fontSize: 11 }}
+      />
       <YAxis />
       <Tooltip />
 
