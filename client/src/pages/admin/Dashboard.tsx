@@ -347,9 +347,9 @@ export default function Dashboard() {
       <Pie
         data={stats?.subjectDistribution || []}
         dataKey="value"
-        nameKey="_id"
+        nameKey="subject"
         outerRadius={120}
-        label
+        label={({ subject, course }) => `${subject} (${course})`}
       >
         {(stats?.subjectDistribution || []).map((_: any, index: number) => (
           <Cell
