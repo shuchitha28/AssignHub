@@ -208,7 +208,6 @@ const courseDistribution = await Subject.aggregate([
 // =============================
 // SUBJECT DISTRIBUTION
 // =============================
-
 const subjectDistribution = await Assignment.aggregate([
   {
     $lookup: {
@@ -221,8 +220,21 @@ const subjectDistribution = await Assignment.aggregate([
   { $unwind: "$subject" },
 
   {
+    $lookup: {
+      from: "courses",
+      localField: "subject.course",
+      foreignField: "_id",
+      as: "course"
+    }
+  },
+  { $unwind: "$course" },
+
+  {
     $group: {
-      _id: "$subject.name",
+      _id: {
+        subject: "$subject.name",
+        course: "$course.name"
+      },
       value: { $sum: 1 }
     }
   },
