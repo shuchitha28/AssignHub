@@ -21,8 +21,7 @@ import {
   Bar,
   LineChart,
   Line,
-  ComposedChart,
-  Legend,
+  ComposedChart
 } from "recharts";
 
   const COLORS = [
