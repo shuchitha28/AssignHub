@@ -347,9 +347,9 @@ export default function Dashboard() {
       <Pie
         data={stats?.subjectDistribution || []}
         dataKey="value"
-        nameKey="subject"
+        nameKey="label"
         outerRadius={120}
-        label={({ subject, course }) => `${subject} (${course})`}
+        label
       >
         {(stats?.subjectDistribution || []).map((_: any, index: number) => (
           <Cell
@@ -359,7 +359,10 @@ export default function Dashboard() {
         ))}
       </Pie>
 
-      <Tooltip />
+      <Tooltip
+        formatter={(value: any) => [`${value} assignments`, "Total"]}
+        labelFormatter={(label: any) => label}
+      />
       <Legend />
     </PieChart>
   </ResponsiveContainer>
