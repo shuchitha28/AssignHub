@@ -23,7 +23,6 @@ import {
   Line,
 } from "recharts";
 
-export default function Dashboard() {
   const COLORS = [
   "#8b5cf6",
   "#06b6d4",
@@ -32,6 +31,7 @@ export default function Dashboard() {
   "#f59e0b",
 ];
 
+export default function Dashboard() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
