@@ -238,6 +238,14 @@ const subjectDistribution = await Assignment.aggregate([
       value: { $sum: 1 }
     }
   },
+    {
+    $project: {
+      _id: 0,
+      subject: "$_id.subject",
+      course: "$_id.course",
+      value: 1
+    }
+  },
 
   {
     $sort: { value: -1 }
