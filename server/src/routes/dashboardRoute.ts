@@ -90,51 +90,111 @@ for (let i = 29; i >= 0; i--) {
 // TEACHER PASTE ANALYTICS
 // =============================
 
-const pasteAnalytics = await Submission.aggregate([
-  {
-    $match: {
-      pastedPercentage: { $gt: 30 },
-      assignment: { $ne: null }
-    }
-  },
+const pasteAnalytics = await User.aggregate([
+  { $match: { role: "teacher" } },
+
   {
     $lookup: {
       from: "assignments",
-      localField: "assignment",
-      foreignField: "_id",
-      as: "assignment"
+      localField: "_id",
+      foreignField: "teacher",
+      as: "assignments"
     }
   },
+
   {
-  $unwind: {
-    path: "$assignment",
-    preserveNullAndEmptyArrays: true
-  }
-},
+    $unwind: {
+      path: "$assignments",
+      preserveNullAndEmptyArrays: true
+    }
+  },
 
   {
     $lookup: {
-      from: "users",
-      localField: "assignment.teacher",
-      foreignField: "_id",
-      as: "teacher"
+      from: "submissions",
+      localField: "assignments._id",
+      foreignField: "assignment",
+      as: "submissions"
     }
   },
+
   {
-  $unwind: {
-    path: "$teacher",
-    preserveNullAndEmptyArrays: true
-  }
-},
+    $unwind: {
+      path: "$submissions",
+      preserveNullAndEmptyArrays: true
+    }
+  },
+
+  // Only consider real submissions
+  {
+    $match: {
+      "submissions._id": { $ne: null }
+    }
+  },
 
   {
     $group: {
-      _id: "$teacher.name",
-      count: { $sum: 1 }
+      _id: "$name",
+
+      total: { $sum: 1 },
+
+      highPaste: {
+        $sum: {
+          $cond: [
+            { $gt: ["$submissions.pastedPercentage", 30] },
+            1,
+            0
+          ]
+        }
+      }
     }
   },
 
-  { $sort: { count: -1 } }
+  {
+    $project: {
+      _id: 0,
+      teacher: "$_id",
+      total: 1,
+      highPaste: 1,
+
+      percentage: {
+        $cond: [
+          { $gt: ["$total", 0] },
+          {
+            $multiply: [
+              { $divide: ["$highPaste", "$total"] },
+              100
+            ]
+          },
+          0
+        ]
+      }
+    }
+  },
+
+  {
+    $addFields: {
+      color: {
+        $switch: {
+          branches: [
+            {
+              case: { $lte: ["$percentage", 20] },
+              then: "green"
+            },
+            {
+              case: { $lte: ["$percentage", 50] },
+              then: "yellow"
+            }
+          ],
+          default: "red"
+        }
+      }
+    }
+  },
+
+  {
+    $sort: { percentage: -1 }
+  }
 ]);
 
 // =============================
