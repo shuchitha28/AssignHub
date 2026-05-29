@@ -133,6 +133,20 @@ export default function Dashboard() {
                       <stop offset="5%" stopColor="rgb(var(--primary))" stopOpacity={0.2} />
                       <stop offset="95%" stopColor="rgb(var(--primary))" stopOpacity={0} />
                     </linearGradient>
+                    <linearGradient id="colorTeachers" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#06b6d4" stopOpacity={0} />
+                    </linearGradient>
+                    
+                    <linearGradient id="colorCourses" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
+                    
+                    <linearGradient id="colorSubjects" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                    </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
                   <XAxis
@@ -151,40 +165,40 @@ export default function Dashboard() {
                     contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', padding: '16px' }}
                     itemStyle={{ fontWeight: 800, fontSize: '14px', color: 'rgb(var(--primary))' }}
                   />
-<Area
-  type="monotone"
-  dataKey="students"
-  stroke="#8b5cf6"
-  strokeWidth={3}
-  fillOpacity={1}
-  fill="url(#colorStudents)"
-/>
-
-<Area
-  type="monotone"
-  dataKey="teachers"
-  stroke="#06b6d4"
-  strokeWidth={3}
-  fillOpacity={0}
-/>
-
-<Area
-  type="monotone"
-  dataKey="courses"
-  stroke="#10b981"
-  strokeWidth={3}
-  fillOpacity={0}
-/>
-
-<Area
-  type="monotone"
-  dataKey="subjects"
-  stroke="#f59e0b"
-  strokeWidth={3}
-  fillOpacity={0}
-/>
-
-<Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="students"
+                    stroke="#8b5cf6"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#colorStudents)"
+                  />
+                  
+                  <Area
+                    type="monotone"
+                    dataKey="teachers"
+                    stroke="#06b6d4"
+                    strokeWidth={3}
+                    fill="url(#colorTeachers)"
+                  />
+                  
+                  <Area
+                    type="monotone"
+                    dataKey="courses"
+                    stroke="#10b981"
+                    strokeWidth={3}
+                    fill="url(#colorCourses)"
+                  />
+                  
+                  <Area
+                    type="monotone"
+                    dataKey="subjects"
+                    stroke="#f59e0b"
+                    strokeWidth={3}
+                    fill="url(#colorSubjects)"
+                  />
+                  
+                  <Legend />
                 </AreaChart>
               </ResponsiveContainer>
             )}
