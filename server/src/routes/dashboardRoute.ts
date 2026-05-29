@@ -70,12 +70,7 @@ router.get("/", protect, async (req, res) => {
     const activity = [
       ...recentUsers.map(u => ({ type: 'user', text: `New ${u.role} joined: ${u.name}`, time: u.createdAt })),
       ...recentCourses.map(c => ({ type: 'course', text: `Course created: ${c.name}`, time: c.createdAt }))
-    ].sort((a: any, b: any) => {
-  return (
-    new Date(b.time).getTime() -
-    new Date(a.time).getTime()
-  );
-});
+    ].sort((a: any, b: any) => b.time - a.time);
 
     // =============================
 // TEACHER PASTE ANALYTICS
@@ -168,94 +163,6 @@ const submissionDistribution = await Submission.aggregate([
     }
   }
 ]);
-
-// =============================
-// SUBJECT + COURSE SUBMISSION STATUS
-// =============================
-
-const submissionStatusBySubject = await Submission.aggregate([
-  {
-    $lookup: {
-      from: "assignments",
-      localField: "assignment",
-      foreignField: "_id",
-      as: "assignment"
-    }
-  },
-  { $unwind: "$assignment" },
-
-  {
-    $lookup: {
-      from: "subjects",
-      localField: "assignment.subject",
-      foreignField: "_id",
-      as: "subject"
-    }
-  },
-  { $unwind: "$subject" },
-
-  {
-    $lookup: {
-      from: "courses",
-      localField: "subject.course",
-      foreignField: "_id",
-      as: "course"
-    }
-  },
-  { $unwind: "$course" },
-
-  {
-    $group: {
-      _id: {
-        subject: "$subject.name",
-        course: "$course.name"
-      },
-
-      submitted: {
-        $sum: {
-          $cond: [{ $eq: ["$status", "submitted"] }, 1, 0]
-        }
-      },
-
-      reviewed: {
-        $sum: {
-          $cond: [{ $eq: ["$status", "reviewed"] }, 1, 0]
-        }
-      },
-
-      draft: {
-        $sum: {
-          $cond: [{ $eq: ["$status", "draft"] }, 1, 0]
-        }
-      },
-
-      revision_requested: {
-        $sum: {
-          $cond: [{ $eq: ["$status", "revision_requested"] }, 1, 0]
-        }
-      }
-    }
-  },
-
-  {
-    $project: {
-      _id: 0,
-      subject: "$_id.subject",
-      course: "$_id.course",
-      submitted: 1,
-      reviewed: 1,
-      draft: 1,
-      revision_requested: 1
-    }
-  },
-
-  {
-    $sort: {
-      course: 1,
-      subject: 1
-    }
-  }
-]);
     
     res.json({
       students,
@@ -268,9 +175,7 @@ const submissionStatusBySubject = await Submission.aggregate([
   pasteAnalytics,
   assignmentPerTeacher,
   userDistribution,
-  submissionDistribution,
-
-  submissionStatusBySubject
+  submissionDistribution
     });
   } catch (err) {
     console.error(err);
