@@ -91,7 +91,12 @@ const pasteAnalytics = await Submission.aggregate([
       as: "assignment"
     }
   },
-  { $unwind: "$assignment" },
+  {
+  $unwind: {
+    path: "$assignment",
+    preserveNullAndEmptyArrays: true
+  }
+},
 
   {
     $lookup: {
@@ -101,7 +106,12 @@ const pasteAnalytics = await Submission.aggregate([
       as: "teacher"
     }
   },
-  { $unwind: "$teacher" },
+  {
+  $unwind: {
+    path: "$teacher",
+    preserveNullAndEmptyArrays: true
+  }
+},
 
   {
     $group: {
@@ -126,7 +136,12 @@ const assignmentPerTeacher = await Assignment.aggregate([
       as: "teacher"
     }
   },
-  { $unwind: "$teacher" },
+  {
+  $unwind: {
+    path: "$teacher",
+    preserveNullAndEmptyArrays: true
+  }
+},
 
   {
     $group: {
@@ -177,7 +192,12 @@ const submissionStatusBySubject = await Submission.aggregate([
       as: "assignment"
     }
   },
-  { $unwind: "$assignment" },
+  {
+  $unwind: {
+    path: "$assignment",
+    preserveNullAndEmptyArrays: true
+  }
+},
 
   {
     $lookup: {
@@ -187,7 +207,12 @@ const submissionStatusBySubject = await Submission.aggregate([
       as: "subject"
     }
   },
-  { $unwind: "$subject" },
+  {
+  $unwind: {
+    path: "$subject",
+    preserveNullAndEmptyArrays: true
+  }
+},
 
   {
     $lookup: {
@@ -197,7 +222,12 @@ const submissionStatusBySubject = await Submission.aggregate([
       as: "course"
     }
   },
-  { $unwind: "$course" },
+  {
+  $unwind: {
+    path: "$course",
+    preserveNullAndEmptyArrays: true
+  }
+},
 
   {
     $group: {
