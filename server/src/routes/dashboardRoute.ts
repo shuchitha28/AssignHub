@@ -206,56 +206,6 @@ const courseDistribution = await Subject.aggregate([
   }
 ]);
 // =============================
-// SUBJECT DISTRIBUTION
-// =============================
-const subjectDistribution = await Assignment.aggregate([
-  {
-    $lookup: {
-      from: "subjects",
-      localField: "subject",
-      foreignField: "_id",
-      as: "subject"
-    }
-  },
-  { $unwind: "$subject" },
-
-  {
-    $lookup: {
-      from: "courses",
-      localField: "subject.course",
-      foreignField: "_id",
-      as: "course"
-    }
-  },
-  { $unwind: "$course" },
-
-  {
-    $group: {
-      _id: {
-        subject: "$subject.name",
-        course: "$course.name"
-      },
-      value: { $sum: 1 }
-    }
-  },
-{
-  $project: {
-    _id: 0,
-    subject: 1,
-    course: 1,
-    value: 1,
-    label: {
-      $concat: ["$subject", " (", "$course", ")"]
-    }
-  }
-},
-
-  {
-    $sort: { value: -1 }
-  }
-]);
-
-// =============================
 // SUBJECT + COURSE SUBMISSION STATUS
 // =============================
 
@@ -370,7 +320,6 @@ const submissionStatusBySubject = await Submission.aggregate([
   assignmentPerTeacher,
   userDistribution,
   courseDistribution,
-subjectDistribution,
   submissionStatusBySubject
     });
   } catch (err) {
@@ -378,10 +327,6 @@ subjectDistribution,
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
-
-
 
 router.get(
   "/student",
