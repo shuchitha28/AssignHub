@@ -151,14 +151,40 @@ export default function Dashboard() {
                     contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', padding: '16px' }}
                     itemStyle={{ fontWeight: 800, fontSize: '14px', color: 'rgb(var(--primary))' }}
                   />
-                  <Area
-                    type="monotone"
-                    dataKey="students"
-                    stroke="rgb(var(--primary))"
-                    strokeWidth={4}
-                    fillOpacity={1}
-                    fill="url(#colorStudents)"
-                  />
+<Area
+  type="monotone"
+  dataKey="students"
+  stroke="#8b5cf6"
+  strokeWidth={3}
+  fillOpacity={1}
+  fill="url(#colorStudents)"
+/>
+
+<Area
+  type="monotone"
+  dataKey="teachers"
+  stroke="#06b6d4"
+  strokeWidth={3}
+  fillOpacity={0}
+/>
+
+<Area
+  type="monotone"
+  dataKey="courses"
+  stroke="#10b981"
+  strokeWidth={3}
+  fillOpacity={0}
+/>
+
+<Area
+  type="monotone"
+  dataKey="subjects"
+  stroke="#f59e0b"
+  strokeWidth={3}
+  fillOpacity={0}
+/>
+
+<Legend />
                 </AreaChart>
               </ResponsiveContainer>
             )}
