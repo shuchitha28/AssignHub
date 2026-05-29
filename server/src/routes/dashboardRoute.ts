@@ -86,13 +86,16 @@ for (let i = 29; i >= 0; i--) {
     new Date(b.time).getTime() - new Date(a.time).getTime()
 );
 
-    // =============================
+// =============================
 // TEACHER PASTE ANALYTICS
 // =============================
-
 const pasteAnalytics = await User.aggregate([
-  { $match: { role: "teacher" } },
+  // 1. Only teachers
+  {
+    $match: { role: "teacher" }
+  },
 
+  // 2. Join assignments created by teacher
   {
     $lookup: {
       from: "assignments",
@@ -102,6 +105,7 @@ const pasteAnalytics = await User.aggregate([
     }
   },
 
+  // 3. Flatten assignments
   {
     $unwind: {
       path: "$assignments",
@@ -109,6 +113,7 @@ const pasteAnalytics = await User.aggregate([
     }
   },
 
+  // 4. Join submissions for those assignments
   {
     $lookup: {
       from: "submissions",
@@ -118,6 +123,7 @@ const pasteAnalytics = await User.aggregate([
     }
   },
 
+  // 5. Flatten submissions
   {
     $unwind: {
       path: "$submissions",
@@ -125,20 +131,21 @@ const pasteAnalytics = await User.aggregate([
     }
   },
 
-  // Only consider real submissions
+  // 6. Filter only high paste submissions (keep null-safe)
   {
     $match: {
-      "submissions._id": { $ne: null }
+      $or: [
+        { "submissions.pastedPercentage": { $gt: 30 } },
+        { "submissions": { $eq: null } }
+      ]
     }
   },
 
+  // 7. Group per teacher
   {
     $group: {
       _id: "$name",
-
-      total: { $sum: 1 },
-
-      highPaste: {
+      count: {
         $sum: {
           $cond: [
             { $gt: ["$submissions.pastedPercentage", 30] },
@@ -150,53 +157,11 @@ const pasteAnalytics = await User.aggregate([
     }
   },
 
+  // 8. Sort
   {
-    $project: {
-      _id: 0,
-      teacher: "$_id",
-      total: 1,
-      highPaste: 1,
-
-      percentage: {
-        $cond: [
-          { $gt: ["$total", 0] },
-          {
-            $multiply: [
-              { $divide: ["$highPaste", "$total"] },
-              100
-            ]
-          },
-          0
-        ]
-      }
-    }
-  },
-
-  {
-    $addFields: {
-      color: {
-        $switch: {
-          branches: [
-            {
-              case: { $lte: ["$percentage", 20] },
-              then: "green"
-            },
-            {
-              case: { $lte: ["$percentage", 50] },
-              then: "yellow"
-            }
-          ],
-          default: "red"
-        }
-      }
-    }
-  },
-
-  {
-    $sort: { percentage: -1 }
+    $sort: { count: -1 }
   }
 ]);
-
 // =============================
 // ASSIGNMENTS CREATED PER TEACHER
 // =============================
