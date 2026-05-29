@@ -2,6 +2,8 @@ import express from "express";
 import Course from "../models/course";
 import Subject from "../models/subject";
 import User from "../models/user";
+import Assignment from "../models/assignment";
+import Submission from "../models/submission";
 import { protect } from "../middleware/auth";
 import { getStudentDashboard, getTeacherDashboard } from "../controllers/dashboardController";
 import { allowRoles } from "../middleware/role";
@@ -69,14 +71,111 @@ router.get("/", protect, async (req, res) => {
       ...recentUsers.map(u => ({ type: 'user', text: `New ${u.role} joined: ${u.name}`, time: u.createdAt })),
       ...recentCourses.map(c => ({ type: 'course', text: `Course created: ${c.name}`, time: c.createdAt }))
     ].sort((a: any, b: any) => b.time - a.time);
-  
+
+    // =============================
+// TEACHER PASTE ANALYTICS
+// =============================
+
+const pasteAnalytics = await Submission.aggregate([
+  {
+    $match: {
+      pastedPercentage: { $gt: 60 },
+      assignment: { $ne: null }
+    }
+  },
+  {
+    $lookup: {
+      from: "assignments",
+      localField: "assignment",
+      foreignField: "_id",
+      as: "assignment"
+    }
+  },
+  { $unwind: "$assignment" },
+
+  {
+    $lookup: {
+      from: "users",
+      localField: "assignment.teacher",
+      foreignField: "_id",
+      as: "teacher"
+    }
+  },
+  { $unwind: "$teacher" },
+
+  {
+    $group: {
+      _id: "$teacher.name",
+      count: { $sum: 1 }
+    }
+  },
+
+  { $sort: { count: -1 } }
+]);
+
+// =============================
+// ASSIGNMENTS CREATED PER TEACHER
+// =============================
+
+const assignmentPerTeacher = await Assignment.aggregate([
+  {
+    $lookup: {
+      from: "users",
+      localField: "teacher",
+      foreignField: "_id",
+      as: "teacher"
+    }
+  },
+  { $unwind: "$teacher" },
+
+  {
+    $group: {
+      _id: "$teacher.name",
+      assignments: { $sum: 1 }
+    }
+  },
+
+  { $sort: { assignments: -1 } }
+]);
+
+// =============================
+// USER ROLE DISTRIBUTION
+// =============================
+
+const userDistribution = await User.aggregate([
+  {
+    $group: {
+      _id: "$role",
+      value: { $sum: 1 }
+    }
+  }
+]);
+
+// =============================
+// SUBMISSION STATUS DISTRIBUTION
+// =============================
+
+const submissionDistribution = await Submission.aggregate([
+  {
+    $group: {
+      _id: "$status",
+      value: { $sum: 1 }
+    }
+  }
+]);
+    
     res.json({
       students,
       teachers,
       courses,
       subjects,
       trends: fullTrends,
-      activity
+      activity,
+
+  pasteAnalytics,
+  assignmentPerTeacher,
+  userDistribution,
+  submissionDistribution
     });
   } catch (err) {
     console.error(err);
