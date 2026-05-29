@@ -203,65 +203,7 @@ export default function Dashboard() {
         </div>
       </div>
            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-     {/* PASTE ANALYTICS */}
-<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-  <div className="mb-6">
-    <h2 className="text-2xl font-black">Paste Abuse Analytics</h2>
-    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-      Students using &gt;30% pasted content
-    </p>
-  </div>
-
-  <ResponsiveContainer width="100%" height={300}>
-    <LineChart data={stats?.pasteAnalytics || []}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis
-  dataKey="_id"
-  angle={-15}
-  textAnchor="end"
-  interval={0}
-  height={60}
-  tick={{ fontSize: 11 }}
-/>
-      <YAxis />
-      <Tooltip />
-      <Line
-        type="monotone"
-        dataKey="count"
-        stroke="rgb(var(--primary))"
-        strokeWidth={4}
-      />
-    </LineChart>
-  </ResponsiveContainer>
-</div>
-    {/* ASSIGNMENT CREATION */}
-<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-  <div className="mb-6">
-    <h2 className="text-2xl font-black">Assignments by Teachers</h2>
-  </div>
-
-  <ResponsiveContainer width="100%" height={300}>
-    <BarChart data={stats?.assignmentPerTeacher || []}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis
-  dataKey="_id"
-  angle={-15}
-  textAnchor="end"
-  interval={0}
-  height={60}
-  tick={{ fontSize: 11 }}
-/>
-      <YAxis />
-      <Tooltip />
-
-      <Bar
-        dataKey="assignments"
-        fill="rgb(var(--primary))"
-        radius={[10, 10, 0, 0]}
-      />
-    </BarChart>
-  </ResponsiveContainer>
-</div>  
+  
       {/* USER DISTRIBUTION */}
 <div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
   <div className="mb-6">
@@ -352,6 +294,66 @@ export default function Dashboard() {
       <Tooltip />
       <Legend />
     </PieChart>
+  </ResponsiveContainer>
+</div>
+
+  {/* ASSIGNMENT CREATION */}
+<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+  <div className="mb-6">
+    <h2 className="text-2xl font-black">Assignments by Teachers</h2>
+  </div>
+
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart data={stats?.assignmentPerTeacher || []}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis
+  dataKey="_id"
+  angle={-15}
+  textAnchor="end"
+  interval={0}
+  height={60}
+  tick={{ fontSize: 11 }}
+/>
+      <YAxis />
+      <Tooltip />
+
+      <Bar
+        dataKey="assignments"
+        fill="rgb(var(--primary))"
+        radius={[10, 10, 0, 0]}
+      />
+    </BarChart>
+  </ResponsiveContainer>
+</div>  
+     {/* PASTE ANALYTICS */}
+<div className="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
+  <div className="mb-6">
+    <h2 className="text-2xl font-black">Paste Abuse Analytics</h2>
+    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+      Students using &gt;30% pasted content
+    </p>
+  </div>
+
+  <ResponsiveContainer width="100%" height={300}>
+    <LineChart data={stats?.pasteAnalytics || []}>
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis
+  dataKey="_id"
+  angle={-15}
+  textAnchor="end"
+  interval={0}
+  height={60}
+  tick={{ fontSize: 11 }}
+/>
+      <YAxis />
+      <Tooltip />
+      <Line
+        type="monotone"
+        dataKey="count"
+        stroke="rgb(var(--primary))"
+        strokeWidth={4}
+      />
+    </LineChart>
   </ResponsiveContainer>
 </div>
              
