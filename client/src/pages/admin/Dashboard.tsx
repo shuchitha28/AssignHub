@@ -318,6 +318,7 @@ export default function Dashboard() {
     </PieChart>
   </ResponsiveContainer>
 </div>
+             
 {/* SUBJECT & COURSE SUBMISSION ANALYTICS */}
 
 <motion.div
@@ -331,17 +332,25 @@ export default function Dashboard() {
   <div className="relative z-10">
     <div className="mb-8">
       <h2 className="text-2xl font-black text-gray-800 dark:text-white tracking-tight">
-        Submission Status by Subject & Course
+        Submission Status by Subject
       </h2>
 
       <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-        Academic Submission Analytics
+        Stacked Submission Analytics
       </p>
     </div>
 
     {stats?.submissionStatusBySubject?.length > 0 ? (
-      <ResponsiveContainer width="100%" height={420}>
-        <BarChart data={stats.submissionStatusBySubject}>
+      <ResponsiveContainer width="100%" height={450}>
+        <BarChart
+          data={stats.submissionStatusBySubject}
+          margin={{
+            top: 20,
+            right: 30,
+            left: 10,
+            bottom: 70
+          }}
+        >
           <CartesianGrid
             strokeDasharray="3 3"
             vertical={false}
@@ -353,12 +362,16 @@ export default function Dashboard() {
             angle={-15}
             textAnchor="end"
             interval={0}
-            height={70}
+            height={80}
             tick={{
               fontSize: 11,
               fontWeight: 700,
               fill: "#9ca3af"
             }}
+              tickFormatter={(value, index) => {
+    const item = stats?.submissionStatusBySubject?.[index];
+    return `${value} (${item?.course || ""})`;
+  }}
           />
 
           <YAxis
@@ -372,38 +385,50 @@ export default function Dashboard() {
           />
 
           <Tooltip
+              formatter={(value: any, name: any) => [value, name]}
+  labelFormatter={(label: any, payload: any) => {
+    if (payload?.length) {
+      return `${payload[0].payload.subject} (${payload[0].payload.course})`;
+    }
+    return label;
+  }}
             contentStyle={{
               borderRadius: "20px",
               border: "none",
-              boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-              fontWeight: 700
+              boxShadow: "0 10px 30px rgba(0,0,0,0.1)"
             }}
           />
 
           <Legend />
 
+          {/* STACKED BARS */}
+
           <Bar
             dataKey="submitted"
+            stackId="a"
             fill="#8b5cf6"
-            radius={[6, 6, 0, 0]}
+            radius={[0, 0, 0, 0]}
           />
 
           <Bar
             dataKey="reviewed"
+            stackId="a"
             fill="#10b981"
-            radius={[6, 6, 0, 0]}
+            radius={[0, 0, 0, 0]}
           />
 
           <Bar
             dataKey="draft"
+            stackId="a"
             fill="#f59e0b"
-            radius={[6, 6, 0, 0]}
+            radius={[0, 0, 0, 0]}
           />
 
           <Bar
             dataKey="revision_requested"
+            stackId="a"
             fill="#ef4444"
-            radius={[6, 6, 0, 0]}
+            radius={[8, 8, 0, 0]}
           />
         </BarChart>
       </ResponsiveContainer>
