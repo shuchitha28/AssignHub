@@ -79,7 +79,7 @@ router.get("/", protect, async (req, res) => {
 const pasteAnalytics = await Submission.aggregate([
   {
     $match: {
-      pastedPercentage: { $gt: 60 },
+      pastedPercentage: { $gt: 80 },
       assignment: { $ne: null }
     }
   },
