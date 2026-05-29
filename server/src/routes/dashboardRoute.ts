@@ -21,21 +21,24 @@ router.get("/", protect, async (req, res) => {
 // REGISTRATION + PLATFORM TRENDS
 // =============================
 
-const sixMonthsAgo = new Date();
-sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-sixMonthsAgo.setDate(1);
-sixMonthsAgo.setHours(0, 0, 0, 0);
+const daysBack = 30;
 
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
+const startDate = new Date();
+startDate.setDate(startDate.getDate() - daysBack);
+startDate.setHours(0, 0, 0, 0);
+    
 const trends = [];
 
-for (let i = 0; i < 6; i++) {
-  const d = new Date();
-  d.setMonth(d.getMonth() - (5 - i));
+for (let i = 29; i >= 0; i--) {
+  const current = new Date();
 
-  const start = new Date(d.getFullYear(), d.getMonth(), 1);
-  const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+  current.setDate(current.getDate() - i);
+
+  const start = new Date(current);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(current);
+  end.setHours(23, 59, 59, 999);
 
   const [
     students,
