@@ -168,17 +168,56 @@ const userDistribution = await User.aggregate([
     }
   }
 ]);
-
 // =============================
-// SUBMISSION STATUS DISTRIBUTION
+// COURSE DISTRIBUTION
 // =============================
 
-const submissionDistribution = await Submission.aggregate([
+const courseDistribution = await Subject.aggregate([
+  {
+    $lookup: {
+      from: "courses",
+      localField: "course",
+      foreignField: "_id",
+      as: "course"
+    }
+  },
+  { $unwind: "$course" },
+
   {
     $group: {
-      _id: "$status",
+      _id: "$course.name",
       value: { $sum: 1 }
     }
+  },
+
+  {
+    $sort: { value: -1 }
+  }
+]);
+// =============================
+// SUBJECT DISTRIBUTION
+// =============================
+
+const subjectDistribution = await Assignment.aggregate([
+  {
+    $lookup: {
+      from: "subjects",
+      localField: "subject",
+      foreignField: "_id",
+      as: "subject"
+    }
+  },
+  { $unwind: "$subject" },
+
+  {
+    $group: {
+      _id: "$subject.name",
+      value: { $sum: 1 }
+    }
+  },
+
+  {
+    $sort: { value: -1 }
   }
 ]);
 
@@ -296,7 +335,8 @@ const submissionStatusBySubject = await Submission.aggregate([
   pasteAnalytics,
   assignmentPerTeacher,
   userDistribution,
-  submissionDistribution,
+  courseDistribution,
+subjectDistribution,
   submissionStatusBySubject
     });
   } catch (err) {
