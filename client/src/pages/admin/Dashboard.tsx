@@ -164,7 +164,7 @@ export default function Dashboard() {
                         day: "2-digit",
                         month: "short"
                       })
-                    }
+                    }minTickGap={20}
                   />
                   <YAxis
                     axisLine={false}
