@@ -161,10 +161,41 @@ export default function Dashboard() {
                     tickLine={false}
                     tick={{ fontSize: 10, fontWeight: 700, fill: '#9ca3af' }}
                   />
-                  <Tooltip
-                    contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', padding: '16px' }}
-                    itemStyle={{ fontWeight: 800, fontSize: '14px', color: 'rgb(var(--primary))' }}
-                  />
+<Tooltip
+  contentStyle={{
+    borderRadius: "24px",
+    border: "none",
+    background: "white",
+    boxShadow: "0 20px 40px rgba(0,0,0,0.12)",
+    padding: "14px 18px",
+  }}
+  labelStyle={{
+    fontWeight: 900,
+    color: "#111827",
+    marginBottom: "10px",
+    fontSize: "14px",
+  }}
+  itemStyle={{
+    fontWeight: 700,
+    fontSize: "13px",
+    paddingTop: "4px",
+    paddingBottom: "4px",
+  }}
+  formatter={(value: any, name: any) => {
+    const labels: any = {
+      students: "Students",
+      teachers: "Teachers",
+      courses: "Courses",
+      subjects: "Subjects",
+    };
+
+    return [
+      `${value}`,
+      labels[name] || name
+    ];
+  }}
+  labelFormatter={(label) => `Month: ${label}`}
+/>
                   <Area
                     type="monotone"
                     dataKey="students"
