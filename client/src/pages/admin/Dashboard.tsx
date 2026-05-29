@@ -115,13 +115,9 @@ export default function Dashboard() {
             <div className="space-y-1">
               <h2 className="text-2xl font-black text-gray-800 dark:text-white tracking-tight">Registration Velocity</h2>
               <p className="text-xs text-gray-400 font-bold uppercase tracking-widest flex items-center gap-2">
-                <TrendingUp size={14} className="text-green-500" /> Student Onboarding (Last 6 Months)
+                <TrendingUp size={14} className="text-green-500" /> Student Onboarding (Last 1 Months)
               </p>
             </div>
-            <select className="bg-gray-50 dark:bg-gray-800 px-4 py-2 rounded-xl text-xs font-bold border-none outline-none">
-              <option>Last 6 Months</option>
-              <option>Last Year</option>
-            </select>
           </div>
 
           <div className="w-full relative min-h-[300px]">
