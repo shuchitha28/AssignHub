@@ -63,7 +63,7 @@ for (let i = 0; i < 6; i++) {
   ]);
 
   trends.push({
-    month: months[d.getMonth()],
+    date: start.toISOString(),
     students,
     teachers,
     courses,
