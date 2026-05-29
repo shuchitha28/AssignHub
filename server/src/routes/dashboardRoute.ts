@@ -17,51 +17,59 @@ router.get("/", protect, async (req, res) => {
     const courses = await Course.countDocuments();
     const subjects = await Subject.countDocuments();
 
-    // REAL Trend Data: Monthly student registrations for the last 6 months
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-    sixMonthsAgo.setDate(1);
-    sixMonthsAgo.setHours(0, 0, 0, 0);
+// =============================
+// REGISTRATION + PLATFORM TRENDS
+// =============================
 
-    const studentTrends = await User.aggregate([
-      {
-        $match: {
-          role: "student",
-          createdAt: { $gte: sixMonthsAgo }
-        }
-      },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" }
-          },
-          count: { $sum: 1 }
-        }
-      },
-      {
-        $sort: { "_id.year": 1, "_id.month": 1 }
-      }
-    ]);
+const sixMonthsAgo = new Date();
+sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
+sixMonthsAgo.setDate(1);
+sixMonthsAgo.setHours(0, 0, 0, 0);
 
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const trends = studentTrends.map(t => ({
-      month: months[t._id.month - 1],
-      students: t.count
-    }));
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-    // Ensure we have 6 months even if some have 0 registrations
-    const fullTrends = [];
-    for (let i = 0; i < 6; i++) {
-      const d = new Date();
-      d.setMonth(d.getMonth() - (5 - i));
-      const mName = months[d.getMonth()];
-      const existing = trends.find(t => t.month === mName);
-      fullTrends.push({
-        month: mName,
-        students: existing ? existing.students : 0
-      });
-    }
+const trends = [];
+
+for (let i = 0; i < 6; i++) {
+  const d = new Date();
+  d.setMonth(d.getMonth() - (5 - i));
+
+  const start = new Date(d.getFullYear(), d.getMonth(), 1);
+  const end = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+
+  const [
+    students,
+    teachers,
+    courses,
+    subjects
+  ] = await Promise.all([
+    User.countDocuments({
+      role: "student",
+      createdAt: { $gte: start, $lt: end }
+    }),
+
+    User.countDocuments({
+      role: "teacher",
+      createdAt: { $gte: start, $lt: end }
+    }),
+
+    Course.countDocuments({
+      createdAt: { $gte: start, $lt: end }
+    }),
+
+    Subject.countDocuments({
+      createdAt: { $gte: start, $lt: end }
+    })
+  ]);
+
+  trends.push({
+    month: months[d.getMonth()],
+    students,
+    teachers,
+    courses,
+    subjects
+  });
+}
 
     // Recent Activity (Last 5 users/courses)
     const recentUsers = await User.find().sort({ createdAt: -1 }).limit(3);
@@ -329,7 +337,7 @@ const submissionStatusBySubject = await Submission.aggregate([
       teachers,
       courses,
       subjects,
-      trends: fullTrends,
+      trends,
       activity,
 
   pasteAnalytics,
