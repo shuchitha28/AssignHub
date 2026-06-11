@@ -120,16 +120,15 @@ export const getTeacherDashboard = async (req: any, res: Response) => {
     }));
 
     // 6. Submission trends (last 7 days)
-const range = Number(req.query.range) || 7;
-    const startDate = new Date();
-startDate.setDate(startDate.getDate() - (range - 1));
-startDate.setHours(0, 0, 0, 0);
-
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+    
     const submissionTrends = await Submission.aggregate([
       {
         $match: {
           assignment: { $in: assignmentIds },
-          submittedAt: { $gte: startDate }
+          submittedAt: { $gte: sevenDaysAgo }
         }
       },
       {
@@ -145,9 +144,9 @@ startDate.setHours(0, 0, 0, 0);
 
     // Fill in gaps for trends
     const trends = [];
-    for (let i = 0; i < range; i++) {
+    for (let i = 0; i < 7; i++) {
       const d = new Date();
-      d.setDate(d.getDate() - (range - i));
+      d.setDate(d.getDate() - (6 - i));
       const dateStr = d.toISOString().split('T')[0];
       const existing = submissionTrends.find(t => t._id === dateStr);
       trends.push({
