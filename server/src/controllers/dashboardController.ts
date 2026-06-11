@@ -146,7 +146,7 @@ export const getTeacherDashboard = async (req: any, res: Response) => {
     const trends = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date();
-      d.setDate(d.getDate() - (6 - i));
+      d.setDate(d.getDate() - (range - i));
       const dateStr = d.toISOString().split('T')[0];
       const existing = submissionTrends.find(t => t._id === dateStr);
       trends.push({
