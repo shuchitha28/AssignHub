@@ -30,11 +30,12 @@ export default function TeacherDashboard() {
   const { theme } = useTheme();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [range, setRange] = useState(7);
 
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const res = await getTeacherDashboard();
+        const res = await getTeacherDashboard(range);
         setData(res.data);
       } catch (err) {
         console.error("Failed to fetch teacher dashboard", err);
@@ -43,7 +44,7 @@ export default function TeacherDashboard() {
       }
     };
     fetchDashboard();
-  }, []);
+  }, [range]);
 
   if (loading) {
     return (
@@ -175,10 +176,13 @@ export default function TeacherDashboard() {
               </div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white">Submission Trends</h2>
             </div>
-            <select className="bg-gray-50 dark:bg-gray-700 border-none rounded-lg text-sm font-medium focus:ring-0">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-            </select>
+<select
+  value={range}
+  onChange={(e) => setRange(Number(e.target.value))}
+>
+  <option value={7}>Last 7 Days</option>
+  <option value={30}>Last 30 Days</option>
+</select>
           </div>
           
           <div className="h-[300px] w-full">
